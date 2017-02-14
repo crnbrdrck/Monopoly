@@ -91,3 +91,9 @@ These commands are used to inform clients of an update to the state
 - Sends the text of a Chance / Community Chest card that a client has landed on to the client
 - The actual mechanism of the card will be handled by the server
 - If _is_bail_ is True, then the client will be awarded a *Get out of jail free* card (maybe implement later?)
+
+## Implementation
+- We intend to have a method in our server to handle all of these messages in separate threads to keep the server running quickly.
+- We will separate our communication and logic into a Server and Board class respectively.
+- The Server will make use of methods in the Board to handle messages sent from Clients
+- The Server will also have chat functionality built in, to be handled solely by the Server
