@@ -40,7 +40,7 @@ Instruct clients that the player _player_id_ has moved to _tile_
 Instructs clients that player _from_player_ has paid _amount_ to _to_player_
     
 ```python
-{"command": "CARD", "values": [string card_text, boolean bail_card]}
+{"command": "CARD", "values": [str card_text, bool bail_card]}
 ```
 Sends the text of a Chance / Community Chest card that a client has landed on to the client
 The actual mechanism of the card will be handled by the server
