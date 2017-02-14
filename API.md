@@ -5,7 +5,9 @@ Our API between server and client is based on a simple JSON structure
 ```python
 {
     "command": "COMMAND_NAME",
-    "values": ["list", "of", "values"]
+    "values": {
+        "value_name": "value"
+    }
 }
 ```
 
@@ -16,7 +18,7 @@ These commands are used to pass user input to the server to control the state of
 ```python
 {
     "command": "ROLL",
-    "values": []
+    "values": {}
 }
 ```
 - Instructs the server to roll a dice for the client that sends the request
@@ -26,7 +28,7 @@ These commands are used to pass user input to the server to control the state of
 ```python
 {
     "command": "BUY",
-    "values": []
+    "values": {}
 }
 ```
 - Instructs the server to buy the property that the client is currently at
@@ -37,7 +39,9 @@ These commands are used to pass user input to the server to control the state of
 ```python
 {
     "command": "SELL",
-    "values": [int id1, int id2, int ..., int idn]
+    "values": {
+        "ids": [int id1, int id2, ..., int idn]
+    }
 }
 ```
 - Instruct the server to sell the properties identified by the ids _id1_ to _idn_
@@ -51,7 +55,10 @@ These commands are used to inform clients of an update to the state
 ```python
 {
     "command": "GOTO",
-    "values": [int player_id, int tile]
+    "values": {
+        "player": int player_id,
+        "tile": int tile
+    }
 }
 ```
 - Instruct clients that the player _player_id_ has moved to _tile_
@@ -61,19 +68,26 @@ These commands are used to inform clients of an update to the state
 ```python
 {
     "command": "PAY",
-    "values": [int from_player, int to_player, int amount]
+    "values": {
+        "from": int player_id,
+        "to": int player_id,
+        "amount": int amount
+    }
 }
 ```
-- Instructs clients that player _from_player_ has paid _amount_ to _to_player_
+- Instructs clients that player _from_ has paid _amount_ to _to_
 
 
 ### Card
 ```python
 {
     "command": "CARD",
-    "values": [str card_text, bool bail_card]
+    "values": {
+        "text": str text,
+        "is_bail": bool is_bail
+    }
 }
 ```
 - Sends the text of a Chance / Community Chest card that a client has landed on to the client
 - The actual mechanism of the card will be handled by the server
-- If _bail_card_ is True, then the client will be awarded a *Get out of jail free* card (maybe implement later?)
+- If _is_bail_ is True, then the client will be awarded a *Get out of jail free* card (maybe implement later?)
