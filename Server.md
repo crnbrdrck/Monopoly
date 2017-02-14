@@ -3,6 +3,7 @@
 
 ## State
 The Server will have the following pieces of state:
+
 1. Map of player_ids to addresses
     - This is to allow the Board to send messages based solely on player_id alone
 
