@@ -3,4 +3,6 @@
 ## Monopoly project for Computer Science 3rd Year
 
 
-See our [API](API "API")
+- [API](API "API")
+
+- [Server](Server "Server Class")
