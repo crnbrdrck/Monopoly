@@ -3,25 +3,37 @@
 Our API between server and client is based on a simple JSON structure
 
 ```python
-{"command": "COMMAND_NAME", "values": ["list", "of", "values"]}
+{
+    "command": "COMMAND_NAME",
+    "values": ["list", "of", "values"]
+}
 ```
 
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
 
 ```python
-{"command": "ROLL", "values": []}
+{
+    "command": "ROLL",
+    "values": []
+}
 ```
 Instructs the server to roll a dice for the client that sends the request
     
 ```python
-{"command": "BUY", "values": []}
+{
+    "command": "BUY",
+    "values": []
+}
 ```
 Instructs the server to buy the property that the client is currently at
 Will be updated later to include support for houses / hotels
     
 ```python
-{"command": "SELL", "values": [int id1, int id2, ..., int idn]}
+{
+    "command": "SELL",
+    "values": [int id1, int id2, int ..., int idn]
+}
 ```
 Instruct the server to sell the properties identified by the ids _id1_ to _idn_
 Will be expanded later to include support for houses / hotels
@@ -30,17 +42,26 @@ Will be expanded later to include support for houses / hotels
 These commands are used to inform clients of an update to the state
 
 ```python
-{"command": "GOTO", "values": [int player_id, int tile]}
+{
+    "command": "GOTO",
+    "values": [int player_id, int tile]
+}
 ```
 Instruct clients that the player _player_id_ has moved to _tile_
     
 ```python
-{"command": "PAY", "values": [int from_player, int to_player, int amount]}
+{
+    "command": "PAY",
+    "values": [int from_player, int to_player, int amount]
+}
 ```
 Instructs clients that player _from_player_ has paid _amount_ to _to_player_
     
 ```python
-{"command": "CARD", "values": [str card_text, bool bail_card]}
+{
+    "command": "CARD",
+    "values": [str card_text, bool bail_card]
+}
 ```
 Sends the text of a Chance / Community Chest card that a client has landed on to the client
 The actual mechanism of the card will be handled by the server
