@@ -1,3 +1,3 @@
 # Monopoly
 
-See our [API](API "API")
+See our [API](api "API")
