@@ -12,6 +12,7 @@ Our API between server and client is based on a simple JSON structure
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
 
+### Roll
 ```python
 {
     "command": "ROLL",
@@ -19,7 +20,9 @@ These commands are used to pass user input to the server to control the state of
 }
 ```
 Instructs the server to roll a dice for the client that sends the request
-    
+
+
+### Buy
 ```python
 {
     "command": "BUY",
@@ -28,7 +31,9 @@ Instructs the server to roll a dice for the client that sends the request
 ```
 Instructs the server to buy the property that the client is currently at
 Will be updated later to include support for houses / hotels
-    
+
+
+### Sell
 ```python
 {
     "command": "SELL",
@@ -41,6 +46,8 @@ Will be expanded later to include support for houses / hotels
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
 
+
+### Go To
 ```python
 {
     "command": "GOTO",
@@ -48,7 +55,9 @@ These commands are used to inform clients of an update to the state
 }
 ```
 Instruct clients that the player _player_id_ has moved to _tile_
-    
+
+
+### Pay
 ```python
 {
     "command": "PAY",
@@ -56,7 +65,9 @@ Instruct clients that the player _player_id_ has moved to _tile_
 }
 ```
 Instructs clients that player _from_player_ has paid _amount_ to _to_player_
-    
+
+
+### Card
 ```python
 {
     "command": "CARD",
