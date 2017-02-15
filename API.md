@@ -33,7 +33,7 @@ These commands are used by Clients to find and join open games
 - This will normally be sent to the _localhost_, but it allows for externally located servers also (later)
 - If no password is used, _password_ will be None
 - The Server will use the socket object obtained from accepting this connection to add to the map
-- **Returns: ACK**
+- **Returns: Success / Fail**
 
 ### Poll
 ```python
@@ -69,7 +69,7 @@ These commands are used by Clients to find and join open games
 }
 ```
 - This will be sent to a server found using the POLL command
-- **Returns: ACK**
+- **Returns: Success / Fail**
 
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
@@ -93,7 +93,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instructs the server to buy the property that the client is currently at
 - Will be updated later to include support for houses / hotels
-- **Returns: ACK**
+- **Returns: Success / Fail**
 
 ### Sell
 ```python
@@ -106,7 +106,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instruct the server to sell the properties identified by the ids _id1_ to _idn_
 - Will be expanded later to include support for houses / hotels
-- **Returns: PAY **
+- **Returns: PAY**
     
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
