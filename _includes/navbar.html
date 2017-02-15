@@ -1,9 +1,16 @@
 <ul class="nav nav-tabs nav-justified">
+  <li {% if page.url == "/" %}class="active"{% endif %}>
+    <a href="/">
+      Index
+    </a>
+  </li>
   {% for file in site.html_pages %}
-    <li {% if page.url == file.url %}class="active"{% endif %}>
-      <a href="{{page.url}}">
-        {{ page.title }}
-      </a>
-    </li>
+    {% if file.title != "Index" %}
+      <li {% if page.url == file.url %}class="active"{% endif %}>
+        <a href="{{page.url}}">
+          {{ page.title }}
+        </a>
+      </li>
+    {% endif %}
   {% endfor %}
 </ul>
