@@ -1,3 +1,7 @@
+---
+title: API
+---
+
 # API
 
 Our API between server and client is based on a simple JSON structure
