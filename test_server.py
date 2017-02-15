@@ -36,6 +36,7 @@ class TestCreate:
                     data = client.recv(4096).decode()
                     assert data == "1"
                     break
+                    
         except KeyboardInterrupt:
             print("Took too long to respond")
         finally:
