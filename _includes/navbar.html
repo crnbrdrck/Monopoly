@@ -1,9 +1,9 @@
 <ul class="nav nav-tabs nav-justified">
-  <li {% if page.url == "/Monopoly/" %}class="active"{% endif %}>
+  <li {% if page.url == "/Monopoly" %}class="active"{% endif %}>
     <a href="/Monopoly/">Index</a>
   </li>
   {% for file in site.html_pages %}
-    {% if file.title != "" %}
+    {% if file.url != "/Monopoly" %}
       <li {% if page.url == file.url %}class="active"{% endif %}>
         <a href="/Monopoly/{{file.title}}">
           {{ file.title }}
