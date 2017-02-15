@@ -1,3 +1,7 @@
+---
+title: Server
+---
+
 # Server
 *This class will be used to receive messages from the Client, and inform the Board of what is received*
 
