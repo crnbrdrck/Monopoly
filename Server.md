@@ -12,7 +12,7 @@ title: Server
 ## State
 The Server will have the following pieces of state:
 
-1. Map of player_ids to addresses
+1. Map of player_ids to socket objects
     - This is to allow the Board to send messages based solely on player_id alone
 
 2. An instance of the Board class
