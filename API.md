@@ -70,11 +70,12 @@ These commands are used to inform clients of an update to the state
 {
     "command": "ROLL",
     "values": {
-        "roll": int roll_value
+        "roll": [int dice, int dice]
     }
 }
 ```
 - Informs a Client of their Roll value when they send a roll request
+- Sends both dice value to inform the Client if they got a double
 
 
 ### Go To
