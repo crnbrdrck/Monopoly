@@ -107,7 +107,18 @@ These commands are used to pass user input to the server to control the state of
 - Instruct the server to mortgage the properties identified by the ids _id1_ to _idn_
 - Will be expanded later to include support for houses / hotels
 - **Returns: PAY**
-    
+
+### Chat
+```python
+{
+    "command": "CHAT",
+    "values": {
+        "text": str text
+    }
+}
+```
+- Instruct the Server to pass on a chat message to all clients
+- The server will automatically attach things like the username of the sender
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
 
@@ -177,6 +188,20 @@ These commands are used to inform clients of an update to the state
 - Sends the text of a Chance / Community Chest card that a client has landed on to the client
 - The actual mechanism of the card will be handled by the server
 - If _is_bail_ is True, then the client will be awarded a *Get out of jail free* card (maybe implement later?)
+
+### Chat
+```python
+{
+    "command": "CHAT",
+    "values": {
+        "player": str username or None,
+        "text": str message
+    }
+}
+```
+- Sends a chat message to all players
+- If _username_ is None, the message is directly from the server
+- Else it is from the player named _username_
 
 ## Implementation
 - We intend to have a method in our server to handle all of these messages in separate threads to keep the server running quickly.
