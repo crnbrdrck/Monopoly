@@ -5,6 +5,10 @@ title: Server
 # Server
 *This class will be used to receive messages from the Client, and inform the Board of what is received*
 
+## Ports in Use
+- 44469 - Main Game Port: Clients will TCP connect to this port
+- 44470 - Polling Port: Clients will `POLL` for servers using this port
+
 ## State
 The Server will have the following pieces of state:
 
