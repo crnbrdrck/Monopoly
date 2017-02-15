@@ -35,6 +35,9 @@ The Server will also have the following methods:
     
 4. `send_turn(int player)`
     - Constructs and sends a `TURN` message
+    
+5. `send_event(str event_text)`
+    - Sends a chat message to all players informing players of an event
 
 ## Required Methods
 The Server will need the following methods to be in the Board class:
