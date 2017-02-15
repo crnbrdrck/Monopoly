@@ -1,9 +1,11 @@
 <ul class="nav nav-tabs nav-justified">
   {% for file in site.html_pages %}
-    <li {% if page.url == file.url %}class="active"{% endif %}>
-      <a href="/Monopoly/{{file.title}}">
-        {{ file.title }}
-      </a>
-    </li>
+    {% if file.title != "" %}
+      <li {% if page.url == file.url %}class="active"{% endif %}>
+        <a href="/Monopoly/{{file.title}}">
+          {{ file.title }}
+        </a>
+      </li>
+    {% endif %}
   {% endfor %}
 </ul>
