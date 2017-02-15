@@ -51,7 +51,7 @@
       {{ content }}
 
       <footer class="site-footer">
-        {% for page in site.html_pages %}<a href="{{page.href}}">{{ page.title }}</a>{% endfor %}
+        {% for page in site.html_pages %}<a href="{{page.url}}">{{ page.title }}</a>{% endfor %}
       </footer>
     </section>
 
