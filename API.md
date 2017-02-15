@@ -18,7 +18,8 @@ Our API between server and client is based on a simple JSON structure
 *For port values used, see the [Server](Server "Server") documentation*
 
 ## Note: Success / Failure
-When a message below says **Returns: Success / Failure**, expect the following
+When a message below says **Returns: Success / Failure**, expect the following:
+
 - The string `'0'` in case of a success
 - The string `'1'` in case of a failure
 
