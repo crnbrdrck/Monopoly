@@ -96,13 +96,15 @@ These commands are used to inform clients of an update to the state
 {
     "command": "PAY",
     "values": {
-        "from": int player_id,
-        "to": int player_id,
+        "from": int player_id or None,
+        "to": int player_id or None,
         "amount": int amount
     }
 }
 ```
 - Instructs clients that player _from_ has paid _amount_ to _to_
+- Either _from_ or _to_ can be None, indicating a payment from / to the Bank
+- Only one of these can be None in any one payload
 
 
 ### Card
