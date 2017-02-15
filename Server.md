@@ -21,11 +21,25 @@ The Server will also have the following methods:
 1. `send_goto(int player_id, int tile)`
     - Constructs and sends a `GOTO` message
 
-2. `send_pay(int from, int to, int amount)`
+2. `send_pay(int amount, int from=None, int to=None)`
     - Constructs and sends a `PAY` message
+    - If _from_ or _to_ is `None`, the money is coming from the Bank
+    - If one is None, the other must have a value
 
 3. `send_card(Card card)`
     - Constructs and sends a `CARD` message
     
 4. `send_turn(int player)`
     - Constructs and sends a `TURN` message
+
+## Required Methods
+The Server will need the following methods to be in the Board class:
+
+1. `handle_roll(int player)`
+    - Informs the Board of a Roll request from the Player _player_
+    
+2. `handle_buy(int player)`
+    - Informs the Board of a Buy request from the Player _player_
+    
+3. `handle_sell(int player, int[] properties)`
+    - Informs the Board of a Sell request from the Player _player_
