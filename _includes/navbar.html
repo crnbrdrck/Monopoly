@@ -5,7 +5,7 @@
   {% for file in site.html_pages %}
     {% if file.url != "/" %}
       <li {% if page.url == file.url %}class="active"{% endif %}>
-        <a href="/Monopoly/{{file.title}}">
+        <a href="{{file.title}}">
           {{ file.title }}
         </a>
       </li>
