@@ -51,7 +51,7 @@ These commands are used by Clients to find and join open games
 {
     "command": "GAME",
     "values": {
-        "games": [game]
+        "game": game_details
     }
 }
 ```
