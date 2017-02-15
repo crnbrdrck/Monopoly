@@ -20,7 +20,7 @@ The Server will have the following pieces of state:
     - The Server will receive and parse messages from Clients and call appropriate methods in the Board for game state updates
     
 ## Methods
-The Server will also have the following methods:
+The Server will have the following methods to be used by Board:
 
 1. `send_goto(int player_id, int tile)`
     - Constructs and sends a `GOTO` message
