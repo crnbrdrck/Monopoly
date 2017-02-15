@@ -17,6 +17,11 @@ Our API between server and client is based on a simple JSON structure
 
 *For port values used, see the [Server](Server "Server") documentation*
 
+## Note: Success / Failure
+When a message below says **Returns: Success / Failure**, expect the following
+- The string `'0'` in case of a success
+- The string `'1'` in case of a failure
+
 ## Game Discovery Commands
 These commands are used by Clients to find and join open games
 
@@ -35,7 +40,7 @@ These commands are used by Clients to find and join open games
 - If no password is used, _password_ will be None
 - The Server will use the socket object obtained from accepting this connection to add to the map
 - The _game_ value must be specified as Monopoly so the server will not accidentally be created for other games
-- **Returns: Success / Fail**
+- **Returns: Success / Failure**
 
 ### Poll
 ```python
@@ -74,7 +79,7 @@ These commands are used by Clients to find and join open games
 }
 ```
 - This will be sent to a server found using the POLL command
-- **Returns: Success / Fail**
+- **Returns: Success / Failure**
 
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
@@ -98,7 +103,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instructs the server to buy the property that the client is currently at
 - Will be updated later to include support for houses / hotels
-- **Returns: Success / Fail**
+- **Returns: Success / Failure**
 
 ### Sell
 ```python
