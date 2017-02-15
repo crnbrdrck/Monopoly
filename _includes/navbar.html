@@ -1,8 +1,9 @@
 <ul class="nav nav-tabs nav-justified">
-  <li {% if page.url == "/API.html" %}class="active"{% endif %}>
-    <a href="API">API</a>
-  </li>
-  <li {% if page.url == "/Server.html" %}class="active"{% endif %}>
-    <a href="Server">Server</a>
-  </li>
+  {% for file in site.html_pages %}
+    <li {% if page.url == file.url %}class="active"{% endif %}>
+      <a href="{{page.url}}">
+        {{ page.title }}
+      </a>
+    </li>
+  {% endfor %}
 </ul>
