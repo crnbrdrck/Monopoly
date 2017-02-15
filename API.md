@@ -104,7 +104,7 @@ These commands are used to pass user input to the server to control the state of
     }
 }
 ```
-- Instruct the server to sell the properties identified by the ids _id1_ to _idn_
+- Instruct the server to mortgage the properties identified by the ids _id1_ to _idn_
 - Will be expanded later to include support for houses / hotels
 - **Returns: PAY**
     
