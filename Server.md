@@ -50,3 +50,6 @@ The Server will need the following methods to be in the Board class:
     
 3. `handle_sell(int player, int[] properties)`
     - Informs the Board of a `SELL` request from the Player _player_
+    
+4. `get_username(int player_id)`
+    - Requests the username of the player with the id _player_id_
