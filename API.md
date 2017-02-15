@@ -15,6 +15,47 @@ Our API between server and client is based on a simple JSON structure
 }
 ```
 
+*For port values used, see the [Server](Server "Server") documentation*
+
+## Game Discovery Commands
+These commands are used by Clients to find and join open games
+
+### Create
+```python
+{
+    "command": "CREATE",
+    "values": {
+        "username": str host_username,
+        "password": str password or None
+    }
+}
+```
+- This will normally be sent to the _localhost_, but it allows for externally located servers also (later)
+- If no password is used, _password_ will be None
+- The Server will use the socket object obtained from accepting this connection to add to the map
+
+### Poll
+```python
+{
+    "command": "POLL",
+    "values": {}
+}
+```
+- This is used to discover any open games on the network.
+- This is the only message that will be sent and received using UDP, since you cannot broadcast with TCP
+
+### Join
+```python
+{
+    "command": "JOIN",
+    "values": {
+        "username": str username,
+        "password": str password or None
+    }
+}
+```
+- This will be sent to a server found using the POLL command
+
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
 
