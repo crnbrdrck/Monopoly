@@ -1,4 +1,4 @@
-from .Server import Server
+from Server import Server
 from json import *
 from select import select
 from socket import *

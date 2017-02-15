@@ -1,4 +1,4 @@
-from .Monopoly import MonopolyException
+from Monopoly import MonopolyException
 from json import dumps, loads
 from select import select
 from socket import *
