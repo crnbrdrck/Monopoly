@@ -36,10 +36,10 @@ The Server will also have the following methods:
 The Server will need the following methods to be in the Board class:
 
 1. `handle_roll(int player)`
-    - Informs the Board of a Roll request from the Player _player_
+    - Informs the Board of a `ROLL` request from the Player _player_
     
 2. `handle_buy(int player)`
-    - Informs the Board of a Buy request from the Player _player_
+    - Informs the Board of a `BUY` request from the Player _player_
     
 3. `handle_sell(int player, int[] properties)`
-    - Informs the Board of a Sell request from the Player _player_
+    - Informs the Board of a `SELL` request from the Player _player_
