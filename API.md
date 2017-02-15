@@ -50,6 +50,28 @@ These commands are used to pass user input to the server to control the state of
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
 
+### Turn
+```python
+{
+    "command": "TURN",
+    "values": {
+        "player": int player_id
+    }
+}
+```
+- Inform all the clients whose turn it is
+
+### Roll
+```python
+{
+    "command": "ROLL",
+    "values": {
+        "roll": int roll_value
+    }
+}
+```
+- Informs a Client of their Roll value when they send a roll request
+
 
 ### Go To
 ```python
@@ -97,3 +119,4 @@ These commands are used to inform clients of an update to the state
 - We will separate our communication and logic into a Server and Board class respectively.
 - The Server will make use of methods in the Board to handle messages sent from Clients
 - The Server will also have chat functionality built in, to be handled solely by the Server
+- The Server can also use the chat functionality to inform the Players of events
