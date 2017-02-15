@@ -39,11 +39,14 @@ These commands are used by Clients to find and join open games
 ```python
 {
     "command": "POLL",
-    "values": {}
+    "values": {
+        "game": "Monopoly"
+    }
 }
 ```
 - This is used to discover any open games on the network.
 - This is the only message that will be sent and received using UDP, since you cannot broadcast with TCP
+- The value is important to determine that the correct game is being polled for
 - **Returns: GAME**
 
 ### Games
