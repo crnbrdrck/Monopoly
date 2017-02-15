@@ -74,6 +74,7 @@ These commands are used by Clients to find and join open games
 {
     "command": "JOIN",
     "values": {
+        "game": "Monopoly",
         "username": str username,
         "password": str password or None
     }
