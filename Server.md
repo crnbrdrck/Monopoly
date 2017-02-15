@@ -22,3 +22,6 @@ The Server will also have the following methods:
 
 3. `send_card(Card card)`
     - Constructs and sends a `CARD` message
+    
+4. `send_turn(int player)`
+    - Constructs and sends a `TURN` message
