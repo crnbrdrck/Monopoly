@@ -23,7 +23,10 @@ class Server:
         # Main socket
         main_sock = socket()
         main_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        main_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
+        try:
+            main_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
+        except:
+            pass
         main_sock.setblocking(0)
         main_sock.bind(('', self.main_port))
         print("Main Socket Bound")
@@ -36,7 +39,10 @@ class Server:
         poll_sock = socket(AF_INET, SOCK_DGRAM)
         poll_sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
         poll_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        poll_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
+        try:
+            poll_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
+        except:
+            pass
         poll_sock.bind(('', self.poll_port))
         self.poll_sock = poll_sock
 
