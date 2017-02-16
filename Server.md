@@ -12,8 +12,8 @@ title: Server
 ## State
 The Server will have the following pieces of state:
 
-1. Map of player_ids to socket objects
-    - This is to allow the Board to send messages based solely on player_id alone
+1. Map of Player objects to socket objects
+    - This is to allow the Board to send messages based solely on Player objects alone
 
 2. An instance of the Board class
     - This is what will actually run the game.
@@ -22,10 +22,10 @@ The Server will have the following pieces of state:
 ## Methods
 The Server will have the following methods to be used by Board:
 
-1. `send_goto(int player_id, int tile)`
+1. `send_goto(Player player, int tile)`
     - Constructs and sends a `GOTO` message
 
-2. `send_pay(int amount, int from=None, int to=None)`
+2. `send_pay(int amount, Player from=None, Player to=None)`
     - Constructs and sends a `PAY` message
     - If _from_ or _to_ is `None`, the money is coming from the Bank
     - If one is None, the other must have a value
@@ -33,7 +33,7 @@ The Server will have the following methods to be used by Board:
 3. `send_card(Card card)`
     - Constructs and sends a `CARD` message
     
-4. `send_turn(int player)`
+4. `send_turn(Player player)`
     - Constructs and sends a `TURN` message
     
 5. `send_event(str event_text)`
@@ -42,17 +42,14 @@ The Server will have the following methods to be used by Board:
 ## Required Methods
 The Server will need the following methods to be in the Board class:
 
-1. `handle_roll(int player)`
+1. `handle_roll(Player player)`
     - Informs the Board of a `ROLL` request from the Player _player_
     
-2. `handle_buy(int player)`
+2. `handle_buy(Player player)`
     - Informs the Board of a `BUY` request from the Player _player_
     
-3. `handle_sell(int player, int[] properties)`
+3. `handle_sell(Player player, int[] properties)`
     - Informs the Board of a `SELL` request from the Player _player_
-    
-4. `get_username(int player_id)`
-    - Requests the username of the player with the id _player_id_
 
-5. `add_player(Player player)`
+4. `add_player(Player player)`
     - Add the Player _player_ to the board
