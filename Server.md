@@ -53,3 +53,6 @@ The Server will need the following methods to be in the Board class:
     
 4. `get_username(int player_id)`
     - Requests the username of the player with the id _player_id_
+
+5. `add_player(Player player)`
+    - Add the Player _player_ to the board
