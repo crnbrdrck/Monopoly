@@ -38,6 +38,9 @@ The Server will have the following methods to be used by Board:
     
 5. `send_event(str event_text)`
     - Sends a chat message to all players informing players of an event
+    
+6. `send_roll(Player player, int dice1, int dice2)`
+    - Constructs and sends a `ROLL` message
 
 ## Required Methods
 The Server will need the following methods to be in the Board class:
