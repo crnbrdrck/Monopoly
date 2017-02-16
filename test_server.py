@@ -64,7 +64,12 @@ class TestCreate:
                 3. All correct values with username and password
         """
         print("Case 1: All Correct Values, no username or password")
-        server = Server()
+        while True:
+            try:
+                server = Server()
+                break
+            except:
+                pass
         sock = socket()
         while True:
             try:
@@ -72,6 +77,7 @@ class TestCreate:
                 break
             except:
                 pass
+        print("Socket connected")
         try:
             # Send a CREATE request with no username or password
             payload = {'command': 'CREATE', 'values': {'game': 'Monopoly'}}
@@ -86,11 +92,17 @@ class TestCreate:
         except:
             raise
         finally:
+            print("Test completed, closing connections - 95")
             server.close()
             sock.close()
 
         print("Case 2: All Correct Values with username and no password")
-        server = Server()
+        while True:
+            try:
+                server = Server()
+                break
+            except:
+                pass
         sock = socket()
         while True:
             try:
@@ -98,6 +110,7 @@ class TestCreate:
                 break
             except:
                 pass
+        print("Socket connected")
         try:
             # Send a CREATE request with a username but no password
             payload = {'command': 'CREATE', 'values': {'game': 'Monopoly', 'username': 'Test'}}
@@ -112,11 +125,17 @@ class TestCreate:
         except:
             raise
         finally:
+            print("Test completed, closing connections - 128")
             server.close()
             sock.close()
 
         print("Case 3: All Correct Values with username and no password")
-        server = Server()
+        while True:
+            try:
+                server = Server()
+                break
+            except:
+                pass
         sock = socket()
         while True:
             try:
@@ -124,6 +143,7 @@ class TestCreate:
                 break
             except:
                 pass
+        print("Socket connected")
         try:
             # Send a CREATE request with a username and password
             password = sha256('hi'.encode()).hexdigest()
@@ -139,6 +159,7 @@ class TestCreate:
         except:
             raise
         finally:
+            print("Test completed, closing connections - 162")
             server.close()
             sock.close()
 

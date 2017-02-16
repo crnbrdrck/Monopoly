@@ -112,8 +112,8 @@ class Server:
             # Open the server
             # self._listen()
         except Exception as e:
+            print("Closing due to exception:", e)
             self.close()
-            print(e)
 
     def _listen(self):
         # Open the polling socket
