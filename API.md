@@ -39,6 +39,7 @@ These commands are used by Clients to find and join open games
 ```
 - This will normally be sent to the _localhost_, but it allows for externally located servers also (later)
 - If no password is used, _password_ will be None
+- Else the password should be encrypted using the following: `sha256(password.encode()).hexdigest()`
 - The Server will use the socket object obtained from accepting this connection to add to the map
 - The _game_ value must be specified as Monopoly so the server will not accidentally be created for other games
 - **Returns: Success / Failure**
@@ -81,6 +82,8 @@ These commands are used by Clients to find and join open games
 }
 ```
 - This will be sent to a server found using the POLL command
+- If no password is used, _password_ will be None
+- Else the password should be encrypted using the following: `sha256(password.encode()).hexdigest()`
 - **Returns: Success / Failure**
 
 ## Client-to-Server Commands
