@@ -150,6 +150,7 @@ These commands are used to inform clients of an update to the state
 ```
 - This message is sent as a response to a `POLL` request
 - The Client can use these messages to build up a list of currently open games on the network
+- Each value in _players_ is a dict of the instance variables in the Player class
 
 ### Start
 ```python
