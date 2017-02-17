@@ -58,18 +58,6 @@ These commands are used by Clients to find and join open games
 - The value is important to determine that the correct game is being polled for
 - **Returns: GAME**
 
-### Games
-```python
-{
-    "command": "GAME",
-    "values": {
-        "game": game_details
-    }
-}
-```
-- This message is sent as a response to a `POLL` request
-- The Client can use these messages to build up a list of currently open games on the network
-
 ### Join
 ```python
 {
@@ -88,6 +76,17 @@ These commands are used by Clients to find and join open games
 
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
+
+### Start
+```python
+{
+    "command": "START",
+    "values": {}
+}
+```
+- Instructs the server to start the game
+- Only works if the host (id = 0) sends the message
+- **Returns: START**
 
 ### Roll
 ```python
@@ -136,6 +135,31 @@ These commands are used to pass user input to the server to control the state of
 - The server will automatically attach things like the username of the sender
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
+
+### Game
+```python
+{
+    "command": "GAME",
+    "values": {
+        "game": {
+            "players": [players, in, game],
+            "password": bool has_password
+        }
+    }
+}
+```
+- This message is sent as a response to a `POLL` request
+- The Client can use these messages to build up a list of currently open games on the network
+
+### Start
+```python
+{
+    "command": "START",
+    "values": {}
+}
+```
+- Sent in response to the host sending a `START` request
+- Informs the Clients that the game has started
 
 ### Turn
 ```python
