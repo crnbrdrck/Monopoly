@@ -16,9 +16,8 @@ The Server will have the following pieces of state:
     - This is what will actually run the game.
     - The Server will receive and parse messages from Clients and call appropriate methods in the Board for game state updates
     
-2. A map of addresses to Player objects
-    - This is so the Server can pass Player object parameters to the Board
-    - The socket will be stored in the Player class
+2. A map of Player objects to sockets
+    - This allows the Server to send to Players with just an instance of a Player object
     
 ## Methods
 The Server will have the following methods to be used by Board:
