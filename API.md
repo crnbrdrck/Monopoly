@@ -42,7 +42,7 @@ These commands are used by Clients to find and join open games
 - Else the password should be encrypted using the following: `sha256(password.encode()).hexdigest()`
 - The Server will use the socket object obtained from accepting this connection to add to the map
 - The _game_ value must be specified as Monopoly so the server will not accidentally be created for other games
-- **Returns: Success / Failure**
+- **Returns: [Success / Failure][1]**
 
 ### Poll
 ```python
@@ -56,7 +56,7 @@ These commands are used by Clients to find and join open games
 - This is used to discover any open games on the network.
 - This is the only message that will be sent and received using UDP, since you cannot broadcast with TCP
 - The value is important to determine that the correct game is being polled for
-- **Returns: GAME**
+- **Returns: [GAME](#game)**
 
 ### Join
 ```python
@@ -72,7 +72,7 @@ These commands are used by Clients to find and join open games
 - This will be sent to a server found using the POLL command
 - If no password is used, _password_ will be None
 - Else the password should be encrypted using the following: `sha256(password.encode()).hexdigest()`
-- **Returns: Success / Failure**
+- **Returns: [Success / Failure][1]**
 
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
@@ -96,7 +96,7 @@ These commands are used to pass user input to the server to control the state of
 }
 ```
 - Instructs the server to roll a dice for the client that sends the request
-- **Returns: ROLL**
+- **Returns: [ROLL](#roll-1)**
 
 ### Buy
 ```python
@@ -107,7 +107,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instructs the server to buy the property that the client is currently at
 - Will be updated later to include support for houses / hotels
-- **Returns: Success / Failure**
+- **Returns: [Success / Failure][1]**
 
 ### Sell
 ```python
@@ -120,7 +120,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instruct the server to mortgage the properties identified by the ids _id1_ to _idn_
 - Will be expanded later to include support for houses / hotels
-- **Returns: PAY**
+- **Returns: [PAY](#pay)**
 
 ### Chat
 ```python
@@ -133,6 +133,8 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instruct the Server to pass on a chat message to all clients
 - The server will automatically attach things like the username of the sender
+- **Returns: [CHAT](#chat-1)**
+
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
 
@@ -249,3 +251,5 @@ These commands are used to inform clients of an update to the state
 - The Server will make use of methods in the Board to handle messages sent from Clients
 - The Server will also have chat functionality built in, to be handled solely by the Server
 - The Server can also use the chat functionality to inform the Players of events
+
+[1](#note-success--failure)
