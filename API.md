@@ -252,4 +252,4 @@ These commands are used to inform clients of an update to the state
 - The Server will also have chat functionality built in, to be handled solely by the Server
 - The Server can also use the chat functionality to inform the Players of events
 
-[1](#note-success--failure)
+[1]: (#note-success--failure)
