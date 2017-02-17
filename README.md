@@ -1,6 +1,10 @@
 # Monopoly
 Monopoly project for Computer Science 3rd Year
 
+# Requirements
+- Python 3.4
+- PyGame 1.9.3
+
 ## GUI Projection
 ```
 +-------------------------------------------------------+------------------+
@@ -31,7 +35,3 @@ Monopoly project for Computer Science 3rd Year
 +-------------------------------------------------------+------------------+
 
 ```
-
-# Requirements
-- Python 3.4
-- PyGame 1.9.3
