@@ -12,12 +12,13 @@ title: Server
 ## State
 The Server will have the following pieces of state:
 
-1. Map of Player objects to socket objects
-    - This is to allow the Board to send messages based solely on Player objects alone
-
-2. An instance of the Board class
+1. An instance of the Board class
     - This is what will actually run the game.
     - The Server will receive and parse messages from Clients and call appropriate methods in the Board for game state updates
+    
+2. A map of addresses to Player objects
+    - This is so the Server can pass Player object parameters to the Board
+    - The socket will be stored in the Player class
     
 ## Methods
 The Server will have the following methods to be used by Board:
@@ -30,7 +31,7 @@ The Server will have the following methods to be used by Board:
     - If _from_ or _to_ is `None`, the money is coming from the Bank
     - If one is None, the other must have a value
 
-3. `send_card(Card card)`
+3. `send_card(Player player, Card card)`
     - Constructs and sends a `CARD` message
     
 4. `send_turn(Player player)`
