@@ -1,9 +1,9 @@
-from Player import Player
-from hashlib import sha256
 from json import dumps, loads
 from select import select
 from socket import *
 from threading import Thread
+
+from Player import Player
 
 
 class Server:
@@ -11,14 +11,17 @@ class Server:
     def __init__(self):
         # Set up variables
 
-        # Map of player_id to sockets
-        self.player_sockets = {}
+        # Map of Player objects to sockets
+        self._player_sockets = {}
+
+        # Reverse map of sockets to Player objects
+        self._socket_owners = {}
 
         # Instance of Board class
-        self.board = object()
+        self._board = object()
 
         # Main socket port
-        self.main_port = 44469
+        self._main_port = 44469
 
         # Main socket
         main_sock = socket()
@@ -28,12 +31,12 @@ class Server:
         except:
             pass
         main_sock.setblocking(0)
-        main_sock.bind(('', self.main_port))
+        main_sock.bind(('', self._main_port))
         print("Main Socket Bound")
-        self.main_sock = main_sock
+        self._main_sock = main_sock
 
         # Polling socket port
-        self.poll_port = 44470
+        self._poll_port = 44470
 
         # Polling socket
         poll_sock = socket(AF_INET, SOCK_DGRAM)
@@ -43,22 +46,30 @@ class Server:
             poll_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
         except:
             pass
-        poll_sock.bind(('', self.poll_port))
-        self.poll_sock = poll_sock
+        poll_sock.bind(('', self._poll_port))
+        self._poll_sock = poll_sock
 
         # Password
-        self.password = None
+        self._password = None
 
         # Created
-        self.created = False
+        self._created = False
 
-        Thread(target=self._create_listener).start()
+        # Started
+        self._started = False
+
+        # Polling Thread
+        self._polling_thread = Thread(target=self._poll_listener, daemon=True)
+
+        self._main_thread = Thread(target=self._create_listener)
+        self._main_thread.start()
 
     def close(self):
         # Cleanup for testing
-        self.created = True
-        self.main_sock.close()
-        self.poll_sock.close()
+        self._created = True
+        self._started = True
+        self._main_sock.close()
+        self._poll_sock.close()
         print("Closed")
 
     """
@@ -67,12 +78,12 @@ class Server:
 
     def _create_listener(self):
         # Have the main socket listen for CREATE messages
-        self.main_sock.listen(10)
+        self._main_sock.listen(10)
         print("Server Listening for CREATE messages")
 
         try:
-            while not self.created:
-                connections, w, x = select([self.main_sock], [], [], 0.05)
+            while not self._created:
+                connections, w, x = select([self._main_sock], [], [], 0.05)
 
                 for conn in connections:
                     client_sock, address = conn.accept()
@@ -89,39 +100,75 @@ class Server:
 
                         # Game Creation message obeys API for now, so try to get the necessary data
                         # Password will either be None or an encrypted text
-                        self.password = data['values'].get('password', None)
+                        self._password = data['values'].get('password', None)
 
                         # Create a Player object with a unique id with this username
                         username = data['values'].get('username', 'Guest')
                         player = Player(username)
 
                         # Send the player to the Board
-                        # self.board.addPlayer(player)
+                        # self._board.addPlayer(player)
 
                         # Store the player socket
-                        self.player_sockets[player] = client_sock
+                        self._player_sockets[player] = client_sock
+                        self._socket_owners[client_sock] = player
 
                         # Inform the client of success
                         client_sock.sendall('0'.encode())
 
-                        # Set created to True to escape loop
-                        self.created = True
+                        # Don't close client_sock since we'll be using it to communicate with the client
+
+                        # Set _created to True to escape loop
+                        self._created = True
                     except ValueError:
                         client_sock.sendall('1'.encode())
+                        client_sock.close()
 
             # Open the server
-            # self._listen()
+            print("Server Open")
+            self._listen()
         except Exception as e:
             print("Closing due to exception:", e)
             self.close()
+        finally:
+            return
 
     def _listen(self):
         # Open the polling socket
         print("Polling socket now open")
-        polling_thread = Thread(target=self._poll_listener, daemon=True)
-        polling_thread.start()
+        self._polling_thread.start()
 
         # Make the main socket listen for new things
+
+    def _poll_listener(self):
+        # Listen for POLL requests
+        while not self._started:
+            data, addr = self._poll_sock.recvfrom(4096)
+            try:
+                data = loads(data.decode())
+                # Check for matching API
+                # Check for command value
+                if 'command' not in data or data['command'] != 'POLL':
+                    raise ValueError()
+
+                # Check for values
+                if 'values' not in data or 'game' not in data['values'] or data['values']['game'] != 'Monopoly':
+                    raise ValueError()
+
+                # If it reached this point, construct and send server data
+                payload = {
+                    'command': 'GAME',
+                    'values': {
+                        'password': self._password is not None,
+                        'players': [p.getUsername() for p in self._player_sockets]
+                    }
+                }
+                # Send the game data back to the person asking
+                self._poll_sock.sendto(dumps(payload).encode(), addr)
+            except:
+                self._poll_sock.sendto('1'.encode(), addr)
+        print("Poll Socket Closing")
+        return
 
     """
         Message Sending Methods
