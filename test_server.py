@@ -69,11 +69,10 @@ class TestCreate:
 
         server.close()
 
-
 class TestPoll:
 
     # Set up a server that has been properly created
-    def pytest_configure(self):
+    def test_configure(self):
         while True:
             try:
                 self.server = Server()
@@ -91,10 +90,6 @@ class TestPoll:
         sock.sendall(dumps(payload).encode())
         assert sock.recv(4096).decode() == '0'
         sock.close()
-
-    # Close the server after the tests finish
-    def pytest_unconfigure(self):
-        self.server.close()
 
     def test_failure(self):
         """
@@ -138,6 +133,10 @@ class TestPoll:
         assert 'password' in data['values'] and data['values']['password'] == False
         assert 'players' in data['values'] and data['values']['players'] == ['Test']
 
+    # Close the server after the tests finish
+    def test_unconfigure(self):
+        self.server.close()
+
 
 if __name__ == '__main__':
     print("Test Create")
@@ -146,9 +145,9 @@ if __name__ == '__main__':
     print()
     print("Test Poll")
     t = TestPoll()
-    t.pytest_configure()
+    t.test_configure()
     t.test_failure()
     print()
     t.test_success()
     print()
-    t.pytest_unconfigure()
+    t.test_unconfigure()
