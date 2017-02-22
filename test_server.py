@@ -72,7 +72,7 @@ class TestCreate:
 class TestPoll:
 
     # Set up a server that has been properly created
-    def test_configure(self):
+    def setup_server(self):
         while True:
             try:
                 self.server = Server()
@@ -91,6 +91,10 @@ class TestPoll:
         assert sock.recv(4096).decode() == '0'
         sock.close()
 
+    # Close the server after the tests finish
+    def teardown_server(self):
+        self.server.close()
+
     def test_failure(self):
         """
         Cases:
@@ -100,6 +104,8 @@ class TestPoll:
             4. Game not in values
             5. Wrong game in values
         """
+        self.setup_server()
+
         print("Case 1: No command key in payload")
         assert send_message(dumps({}), self.server._poll_port, SOCK_DGRAM) == '1'
 
@@ -117,12 +123,14 @@ class TestPoll:
                             self.server._poll_port,
                             SOCK_DGRAM) == '1'
 
+        self.teardown_server()
+
     def test_success(self):
         """
             Case:
                 1. Correct command and value
         """
-
+        self.setup_server()
         print("POLL should return password: False and players: ['Test']")
         data = send_message(dumps({'command': 'POLL', 'values': {'game': 'Monopoly'}}),
                             self.server._poll_port,
@@ -132,22 +140,14 @@ class TestPoll:
         assert 'values' in data
         assert 'password' in data['values'] and data['values']['password'] == False
         assert 'players' in data['values'] and data['values']['players'] == ['Test']
-
-    # Close the server after the tests finish
-    def test_unconfigure(self):
-        self.server.close()
+        self.teardown_server()
 
 
 if __name__ == '__main__':
     print("Test Create")
     t = TestCreate()
     t.test_create()
-    print()
     print("Test Poll")
     t = TestPoll()
-    t.test_configure()
     t.test_failure()
-    print()
     t.test_success()
-    print()
-    t.test_unconfigure()
