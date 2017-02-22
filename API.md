@@ -209,6 +209,18 @@ These commands are used to inform clients of an update to the state
 ```
 - Informs all clients that the Player _player_id_ bought the property at position _tile_
 
+### Sold
+```python
+{
+    "command": "SOLD",
+    "values": {
+        "player": int player_id,
+        "tiles": [int tile, int tile, ...]
+    }
+}
+```
+- Informs all clients that player _player_id_ has sold the properties at positions _tiles_
+
 ### Go To
 ```python
 {
