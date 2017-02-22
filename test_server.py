@@ -69,6 +69,7 @@ class TestCreate:
 
         server.close()
 
+
 class TestPoll:
 
     # Set up a server that has been properly created

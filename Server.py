@@ -127,9 +127,11 @@ class Server:
             # Open the server
             print("Server Open")
             self._listen()
+
         except Exception as e:
             print("Closing due to exception:", e)
             self.close()
+
         finally:
             return
 
@@ -139,6 +141,9 @@ class Server:
         self._polling_thread.start()
 
         # Make the main socket listen for new things
+        self._main_thread = Thread(target=self._start_listener)
+        self._main_thread.start()
+        self._join_listener()
 
     def _poll_listener(self):
         # Listen for POLL requests
@@ -165,10 +170,85 @@ class Server:
                 }
                 # Send the game data back to the person asking
                 self._poll_sock.sendto(dumps(payload).encode(), addr)
+
             except:
                 self._poll_sock.sendto('1'.encode(), addr)
         print("Poll Socket Closing")
         return
+
+    def _join_listener(self):
+        """
+        Listens for join requests
+        """
+
+        # Check for valid values
+        while not self._started:
+            connections, w, x = select([self._main_sock], [], [], 0.05)
+
+            for conn in connections:
+                client_sock, address = conn.accept()
+                message = client_sock.recv(4096).decode()
+                try:
+                    data = loads(message)
+
+                    if 'command' not in data or data['command'] != 'JOIN':
+                        raise ValueError()
+
+                    values = data['values']
+                    if 'game' not in values or values['game'] != 'Monopoly':
+                        raise ValueError()
+                    if 'username' not in values or 'password' not in values:
+                        raise ValueError()
+                    if values['password'] != self._password:
+                        raise ValueError()
+
+                    # At this point it's safe to say the JOIN request is valid
+                    username = values.get('username', 'Guest')
+                    player = Player(username)
+
+                    # Send the player to the Board
+                    # self._board.addPlayer(player)
+
+                    # Store the player socket
+                    self._player_sockets[player] = client_sock
+                    self._socket_owners[client_sock] = player
+
+                    # Inform the client of success
+                    client_sock.sendall('0'.encode())
+
+                except ValueError:
+                    client_sock.sendall('1'.encode())
+                    client_sock.close()
+
+    def _start_listener(self):
+        """
+        Listens for start request
+        """
+
+        # Check for valid values
+        while not self._started:
+            client_sockets = self._socket_owners.keys()
+            connections, w, x = select(client_sockets, [], [], 0.05)
+
+            for conn in connections:
+                message = conn.recv(4096).decode()
+                try:
+                    data = loads(message)
+
+                    if 'command' not in data or data['command'] != 'START':
+                        raise ValueError()
+
+                    # Check the player Id, should be 0
+                    player = self._socket_owners[conn]
+                    if player.getId() == 0:
+                        # Start the game
+                        # Send start messages to everybody
+                        msg = dumps({'command': 'START', 'values': {}})
+                        for sock in self._socket_owners:
+                            sock.sendall(msg.encode())
+
+                except ValueError:
+                    conn.sendall('1'.encode())
 
     """
         Message Sending Methods
