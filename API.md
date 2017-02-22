@@ -116,11 +116,11 @@ These commands are used to pass user input to the server to control the state of
 {
     "command": "SELL",
     "values": {
-        "ids": [int id1, int id2, ..., int idn]
+        "tiles": [int tile1, int tile2, ..., int tilen]
     }
 }
 ```
-- Instruct the server to mortgage the properties identified by the ids _id1_ to _idn_
+- Instruct the server to mortgage the properties identified by the tiless _tile1_ to _tilen_
 - Will be expanded later to include support for houses / hotels
 - **Returns: [PAY](#pay)**
 
@@ -215,11 +215,11 @@ These commands are used to inform clients of an update to the state
     "command": "SOLD",
     "values": {
         "player": int player_id,
-        "tiles": [int tile, int tile, ...]
+        "tiles": [int tile1, int tile2, ..., int tilen]
     }
 }
 ```
-- Informs all clients that player _player_id_ has sold the properties at positions _tiles_
+- Informs all clients that player _player_id_ has sold the properties at positions _tile1_ to _tilen_
 
 ### Go To
 ```python
