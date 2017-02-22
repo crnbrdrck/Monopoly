@@ -102,12 +102,14 @@ These commands are used to pass user input to the server to control the state of
 ```python
 {
     "command": "BUY",
-    "values": {}
+    "values": {
+        "buy": 0 or 1 for YES or NO
+    }
 }
 ```
-- Instructs the server to buy the property that the client is currently at
+- Replies to the Server's [BUY?](#buy-request) with whether they want to purchase the property they are on or not
 - Will be updated later to include support for houses / hotels
-- **Returns: [Success / Failure][1]**
+- **Returns: [BOUGHT](#bought)**
 
 ### Sell
 ```python
@@ -186,6 +188,26 @@ These commands are used to inform clients of an update to the state
 - Informs a Client of their Roll value when they send a roll request
 - Sends both dice value to inform the Client if they got a double
 
+### Buy Request
+```python
+{
+    "command": "BUY?",
+    "values": {}
+}
+```
+- Asks the Player whose turn it is whether or not they'd like to buy the property they are standing on
+
+### Bought
+```python
+{
+    "command": "BOUGHT",
+    "values": {
+        "player": int player_id,
+        "tile": int tile
+    }
+}
+```
+- Informs all clients that the Player _player_id_ bought the property at position _tile_
 
 ### Go To
 ```python
@@ -198,7 +220,6 @@ These commands are used to inform clients of an update to the state
 }
 ```
 - Instruct clients that the player _player_id_ has moved to _tile_
-
 
 ### Pay
 ```python
@@ -214,7 +235,6 @@ These commands are used to inform clients of an update to the state
 - Instructs clients that player _from_ has paid _amount_ to _to_
 - Either _from_ or _to_ can be None, indicating a payment from / to the Bank
 - Only one of these can be None in any one payload
-
 
 ### Card
 ```python
