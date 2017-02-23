@@ -167,15 +167,13 @@ class Server:
                     raise ValueError()
 
                 # If it reached this point, construct and send server data
-                payload = {
-                    'command': 'GAME',
-                    'values': {
-                        'password': self._password is not None,
-                        'players': [p.getUsername() for p in self._player_sockets]
-                    }
-                }
+                msg = self._generate_message(
+                    'GAME',
+                    password=self._password is not None,
+                    players=[p.getUsername() for p in self._player_sockets]
+                )
                 # Send the game data back to the person asking
-                self._poll_sock.sendto(dumps(payload).encode(), addr)
+                self._poll_sock.sendto(msg.encode(), addr)
 
             except:
                 self._poll_sock.sendto('1'.encode(), addr)
@@ -249,9 +247,9 @@ class Server:
                     if len(self._player_sockets) >= 2:
                         # Start the game
                         # Send start messages to everybody
-                        msg = dumps({'command': 'START', 'values': {}})
-                        for sock in self._socket_owners:
-                            sock.sendall(msg.encode())
+                        msg = self._generate_message('START')
+                        self._send_to_all(msg)
+                        self._started = True
                     else:
                         raise ValueError()
 
@@ -262,23 +260,50 @@ class Server:
         Message Sending Methods
     """
 
-    def send_goto(self, player_id, tile):
+    def send_turn(self, player: Player):
+        # Constructs and sends a TURN message
+        msg = self._generate_message('TURN', player=player.getId())
+        self._send_to_all(msg)
+
+    def send_goto(self, player: Player, tile: int):
         # Constructs and sends a GOTO message
-        pass
+        msg = self._generate_message('TURN', player=player.getId(), tile=tile)
+        self._send_to_all(msg)
 
     def send_pay(self, amount, player_from=None, player_to=None):
         # Constructs and sends a PAY message
-        if player_from is None and player_to is None:
-            raise ValueError("Monopoly - PAY: From and To cannot be None together")
+        try:
+            if player_from is None and player_to is None:
+                raise ValueError("Monopoly - PAY: From and To cannot be None together")
+            msg = self._generate_message(
+                'PAY',
+                amount=amount,
+                player_from=player_from.getId(),
+                player_to=player_to.getId())
+            self._send_to_all(msg)
+        except Exception as e:
+            print(e)
 
     def send_card(self, card):
         # Constructs and sends a CARD message
-        pass
-
-    def send_turn(self, player_id):
-        # Constructs and sends a TURN message
-        pass
+        msg = self._generate_message('CARD', text=card.getText(), is_bail=card.isBail())
+        self._send_to_all(msg)
 
     def send_event(self, event_message):
         # Sends an event message through the CHAT feature
-        pass
+        msg = self._generate_message('CHAT', player=None, text=event_message)
+        self._send_to_all(msg)
+
+    def _send_to_all(self, msg: str):
+        # Sends 'message' to all players in game
+        for sock in self._socket_owners:
+            sock.sendall(msg.encode())
+
+    def _generate_message(self, command: str, **values: dict):
+        # Returns a message dumped with the passed command and values
+        return dumps(
+            {
+                'command': command,
+                'values': values
+            }
+        )
