@@ -238,8 +238,8 @@ These commands are used to inform clients of an update to the state
 {
     "command": "PAY",
     "values": {
-        "from": int player_id or None,
-        "to": int player_id or None,
+        "player_from": int player_id or None,
+        "player_to": int player_id or None,
         "amount": int amount
     }
 }
