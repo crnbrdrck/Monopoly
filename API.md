@@ -147,6 +147,13 @@ These commands are used to pass user input to the server to control the state of
 - The server will automatically attach things like the username of the sender
 - **Returns: [CHAT](#chat-1)**
 
+### End Turn
+```python
+{
+    "command": "END",
+    "values": {}
+}
+
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
 
