@@ -8,6 +8,12 @@ from Player import Player
 
 class Server:
 
+    # The max number of players allowed in the lobby
+    _MAX_PLAYERS = 8
+
+    # The max wait for the 'select' methods
+    _SELECT_TIMEOUT = 0.05
+
     def __init__(self):
         # Set up variables
 
@@ -83,7 +89,7 @@ class Server:
 
         try:
             while not self._created:
-                connections, w, x = select([self._main_sock], [], [], 0.05)
+                connections, w, x = select([self._main_sock], [], [], Server._SELECT_TIMEOUT)
 
                 for conn in connections:
                     client_sock, address = conn.accept()
@@ -93,7 +99,6 @@ class Server:
                         # Check that the command is correct
                         if 'command' not in data or data['command'] != 'CREATE':
                             raise ValueError()
-
                         # Check for the necessary data, knowing the command is correct
                         if 'values' not in data or 'game' not in data['values'] or data['values']['game'] != 'Monopoly':
                             raise ValueError()
@@ -120,13 +125,14 @@ class Server:
 
                         # Set _created to True to escape loop
                         self._created = True
-                    except ValueError:
+                    except ValueError as e:
+                        print(e)
                         client_sock.sendall('1'.encode())
                         client_sock.close()
 
             # Open the server
             print("Server Open")
-            self._listen()
+            self._pre_game_listen()
 
         except Exception as e:
             print("Closing due to exception:", e)
@@ -135,7 +141,7 @@ class Server:
         finally:
             return
 
-    def _listen(self):
+    def _pre_game_listen(self):
         # Open the polling socket
         print("Polling socket now open")
         self._polling_thread.start()
@@ -183,7 +189,7 @@ class Server:
 
         # Check for valid values
         while not self._started:
-            connections, w, x = select([self._main_sock], [], [], 0.05)
+            connections, w, x = select([self._main_sock], [], [], Server._SELECT_TIMEOUT)
 
             for conn in connections:
                 client_sock, address = conn.accept()
@@ -197,9 +203,10 @@ class Server:
                     values = data['values']
                     if 'game' not in values or values['game'] != 'Monopoly':
                         raise ValueError()
-                    if 'username' not in values or 'password' not in values:
+                    if 'password' not in values or values['password'] != self._password:
                         raise ValueError()
-                    if values['password'] != self._password:
+                    # Check if lobby is full
+                    if len(self._player_sockets) == Server._MAX_PLAYERS:
                         raise ValueError()
 
                     # At this point it's safe to say the JOIN request is valid
@@ -228,7 +235,7 @@ class Server:
         # Check for valid values
         while not self._started:
             client_sockets = self._socket_owners.keys()
-            connections, w, x = select(client_sockets, [], [], 0.05)
+            connections, w, x = select(client_sockets, [], [], Server._SELECT_TIMEOUT)
 
             for conn in connections:
                 message = conn.recv(4096).decode()
@@ -238,14 +245,15 @@ class Server:
                     if 'command' not in data or data['command'] != 'START':
                         raise ValueError()
 
-                    # Check the player Id, should be 0
-                    player = self._socket_owners[conn]
-                    if player.getId() == 0:
+                    # Check the number of players in game, should be >= 2
+                    if len(self._player_sockets) >= 2:
                         # Start the game
                         # Send start messages to everybody
                         msg = dumps({'command': 'START', 'values': {}})
                         for sock in self._socket_owners:
                             sock.sendall(msg.encode())
+                    else:
+                        raise ValueError()
 
                 except ValueError:
                     conn.sendall('1'.encode())
