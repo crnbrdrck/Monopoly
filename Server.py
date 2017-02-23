@@ -76,7 +76,6 @@ class Server:
         self._started = True
         self._main_sock.close()
         self._poll_sock.close()
-        print("Closed")
 
     """
         Listeners
