@@ -85,7 +85,7 @@ These commands are used to pass user input to the server to control the state of
 }
 ```
 - Instructs the server to start the game
-- Only works if the host (id = 0) sends the message
+- Anyone can send this message, it will only work if there are 2 or more players joined
 - **Returns: [START](#start-1) / Failure**
 
 ### Roll
