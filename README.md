@@ -11,6 +11,6 @@ Monopoly project for Computer Science 3rd Year
 2. Download the source code
   - [ZIP Archive](https://github.com/crnbrdrck/Monopoly/archive/master.zip)
 3. Use pip to install all necessary requirements
-  - python3 -m pip -r requirements.txt
+  - `python3 -m pip -r requirements.txt`
 4. Run the game
-  - python3 Monopoly.py
+  - `python3 Monopoly.py`
