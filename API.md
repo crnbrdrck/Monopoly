@@ -77,6 +77,16 @@ These commands are used by Clients to find and join open games
 ## Client-to-Server Commands
 These commands are used to pass user input to the server to control the state of the game
 
+### Quit
+```python
+{
+    "command": "QUIT",
+    "values": {}
+}
+```
+- Instructs the Server that this Client wishes to quit from the game
+- **Returns [QUIT](#quit-1)**
+
 ### Start
 ```python
 {
@@ -261,6 +271,17 @@ These commands are used to inform clients of an update to the state
 - Sends the text of a Chance / Community Chest card that a client has landed on to the client
 - The actual mechanism of the card will be handled by the server
 - If _is_bail_ is True, then the client will be awarded a *Get out of jail free* card (maybe implement later?)
+
+### Quit
+```python
+{
+    "command": "QUIT",
+    "values": {
+        "player": int player_id
+    }
+}
+```
+- Tells all other clients that a Player has left the game
 
 ### Chat
 ```python
