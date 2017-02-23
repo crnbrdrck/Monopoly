@@ -178,11 +178,14 @@ These commands are used to inform clients of an update to the state
 ```python
 {
     "command": "START",
-    "values": {}
+    "values": {
+        "players": [{int player.id: str player.name} for player in players]
+    }
 }
 ```
 - Sent in response to the host sending a `START` request
 - Informs the Clients that the game has started
+- Informs all clients of the ids of the players in the game for update purposes
 
 ### Turn
 ```python
