@@ -153,6 +153,8 @@ These commands are used to pass user input to the server to control the state of
     "command": "END",
     "values": {}
 }
+```
+- Informs the Server that the current player's turn is now over
 
 ## Server-to-Client Commands
 These commands are used to inform clients of an update to the state
