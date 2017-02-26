@@ -1,4 +1,4 @@
-import pygame, sys, Button, Board, Player
+import pygame, sys, Button, Board, Player, random
 from pygame.locals import *
 
 pygame.init()
@@ -33,6 +33,10 @@ board = Board.Board()
 player1 = Player.Player(DISPLAYSURF,(160,30,160),0,board)
 player2 = Player.Player(DISPLAYSURF,(30,30,30),1,board)
 
+#sample buttons for player movement
+move1 = Button.Button(DISPLAYSURF,820,360,120,60,"Player 1")
+move2 = Button.Button(DISPLAYSURF,820,440,120,60,"Player 2")
+
 
 #main loop
 while True:
@@ -53,5 +57,8 @@ while True:
             elif endturn.pressed(pygame.mouse.get_pos()):
                 #end turn func goes here
                 print("End turn")
-            print(pygame.mouse.get_pos())
+            elif move1.pressed(pygame.mouse.get_pos()):
+                player1.moveTo(random.randrange(40))
+            elif move2.pressed(pygame.mouse.get_pos()):
+                player2.moveTo(random.randrange(40))
     pygame.display.update()
