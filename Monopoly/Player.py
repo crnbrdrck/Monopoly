@@ -17,8 +17,8 @@ class Player:
         self.rect = pygame.Rect(self.coords[0],self.coords[1],10,10)
         pygame.draw.rect(surface,colour,self.rect)
 
-    #Draws a white square at previous location
-    #Redraws player at new location
+    # Draws a white square at previous location
+    # Redraws player at new location
     def moveTo(self,tile):
         whiterect = pygame.Rect(self.coords[0],self.coords[1],10,10)
         pygame.draw.rect(self.surface,(255,255,255),whiterect)
