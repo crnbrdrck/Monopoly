@@ -60,4 +60,5 @@ while True:
                 player1.moveTo(random.randrange(40))
             elif move2.pressed(pygame.mouse.get_pos()):
                 player2.moveTo(random.randrange(40))
+            print(pygame.mouse.get_pos())
     pygame.display.update()
