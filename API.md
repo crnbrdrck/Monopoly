@@ -257,6 +257,17 @@ These commands are used to inform clients of an update to the state
 ```
 - Instruct clients that the player _player_id_ has moved to _tile_
 
+### Jailed
+```python
+{
+    "command": "JAIL",
+    "values: {
+        "player": int player_id
+    }
+}
+```
+- Instructs the clients that the player _player_id_ has been sent to jail
+
 ### Pay
 ```python
 {
