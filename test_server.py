@@ -21,7 +21,6 @@ def send_message(message, port, sock_type=SOCK_STREAM):
             pass
     sock.sendall(message.encode())
     data = sock.recv(4096).decode()
-    print(data)
 
     # Close socket and return data
     sock.close()
