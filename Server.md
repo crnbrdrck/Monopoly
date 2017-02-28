@@ -3,7 +3,7 @@ title: Server
 ---
 
 # Server
-*This class will be used to receive messages from the Client, and inform the Board of what is received*
+*This class will be used to receive messages from the (Client)[1], and inform the (Board)[2] of what is received*
 
 ## Ports in Use
 - 44469 - Main Game Port: Clients will TCP connect to this port
@@ -14,45 +14,51 @@ The Server will have the following pieces of state:
 
 1. An instance of the Board class
     - This is what will actually run the game.
-    - The Server will receive and parse messages from Clients and call appropriate methods in the Board for game state updates
+    - The Server will receive and parse messages from (Client)[1]s and call appropriate methods in the (Board)[2] for game state updates
     
 2. A map of Player objects to sockets
-    - This allows the Server to send to Players with just an instance of a Player object
+    - This allows the Server to send to (Player)[3]s with just an instance of a (Player)[3] object
+
+3. A map of sockets to Player objects
+    - This allows the Server to determine a (Player)[3] by receiving a message from a socket
     
 ## Methods
-The Server will have the following methods to be used by Board:
+The Server will have methods to provide the Board with the ability to send out every kind of message from the (Server-To-Client)[https://crnbrdrck.github.io/Monopoly/API#server-to-client-commands] section of the [API](4).
 
-1. `send_goto(Player player, int tile)`
-    - Constructs and sends a `GOTO` message
+As well as this, the Server will require methods in the [Board](2) class that can handle the messages in the [Client-To-Server](https://crnbrdrck.github.io/Monopoly/API#client-to-server-commands) section of the [API](4).
 
-2. `send_pay(int amount, Player from=None, Player to=None)`
-    - Constructs and sends a `PAY` message
-    - If _from_ or _to_ is `None`, the money is coming from the Bank
-    - If one is None, the other must have a value
+---
 
-3. `send_card(Player player, Card card)`
-    - Constructs and sends a `CARD` message
-    
-4. `send_turn(Player player)`
-    - Constructs and sends a `TURN` message
-    
-5. `send_event(str event_text)`
-    - Sends a chat message to all players informing players of an event
-    
-6. `send_roll(Player player, int dice1, int dice2)`
-    - Constructs and sends a `ROLL` message
+# Message Sending Method Signatures
+```python
+def send_turn(self, player: Player) -> None
 
-## Required Methods
-The Server will need the following methods to be in the Board class:
+def send_roll(self, player: Player, dice: list) -> None
 
-1. `handle_roll(Player player)`
-    - Informs the Board of a `ROLL` request from the Player _player_
-    
-2. `handle_buy(Player player)`
-    - Informs the Board of a `BUY` request from the Player _player_
-    
-3. `handle_sell(Player player, int[] properties)`
-    - Informs the Board of a `SELL` request from the Player _player_
+def send_buy_request(self, player: Player) -> None
 
-4. `add_player(Player player)`
-    - Add the Player _player_ to the board
+def send_bought(self, player: Player, tile: int) -> None
+
+def send_sold(self, player: Player, tiles: list) -> None
+
+def send_goto(self, player: Player, tile: int) -> None
+
+def send_jailed(self, player: Player) -> None
+
+def send_pay(self, amount: int, player_from: Player or None=None, player_to: Player or None=None) -> None
+
+def send_card(self, card: Card) -> None
+
+def send_quit(self, player: Player) -> None
+
+def send_event(self, event_message: str) -> None
+
+def send_chat(self, player: Player or None, message: str) -> None
+```
+
+_These methods are the ones that will be used by the Board to use the API to update clients_
+
+[1]: https://crnbrdrck.github.io/Monopoly/Client
+[2]: https://crnbrdrck.github.io/Monopoly/Board
+[3]: https://crnbrdrck.github.io/Monopoly/Player
+[4]: https://crnbrdrck.github.io/Monopoly/API
