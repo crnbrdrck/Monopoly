@@ -28,10 +28,10 @@ class Main():
         boardx = 30
         boardy = 30
         self.DISPLAYSURF.blit(boardimg, (boardx, boardy))
-        self.buy = Button.Button(DISPLAYSURF, 820, 200, 120, 60, "Buy")
-        self.sell = Button.Button(DISPLAYSURF, 820, 120, 120, 60, "Sell")
-        self.roll = Button.Button(DISPLAYSURF, 820, 40, 120, 60, "Roll")
-        self.endturn = Button.Button(DISPLAYSURF, 820, 280, 120, 60, "End turn")
+        self.buy = Button.Button(self.DISPLAYSURF, 820, 200, 120, 60, "Buy")
+        self.sell = Button.Button(self.DISPLAYSURF, 820, 120, 120, 60, "Sell")
+        self.roll = Button.Button(self.DISPLAYSURF, 820, 40, 120, 60, "Roll")
+        self.endturn = Button.Button(self.DISPLAYSURF, 820, 280, 120, 60, "End turn")
         self.board = Board.Board()
 
     """def playerroll(self,playernum):
@@ -107,19 +107,24 @@ class Main():
     #def hasquit(self,playerid):
         # inform all clients playernum has quit
 
+    def run(self):
+        while True:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    self.chat.destroy()
+                    pygame.quit()
+                    sys.exit(0)
+                elif event.type == MOUSEBUTTONDOWN:
+                    if self.buy.pressed(pygame.mouse.get_pos()):
+                        # Buy func goes here
+                        print("Buy")
+                    elif self.sell.pressed(pygame.mouse.get_pos()):
+                        # Sell func goes here
+                        print("Sell")
+                    elif self.roll.pressed(pygame.mouse.get_pos()):
+                        print("Roll")
+
+
 if __name__ == "__main__":
-    while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                chat.destroy()
-                pygame.quit()
-                sys.exit(0)
-            elif event.type == MOUSEBUTTONDOWN:
-                if self.buy.pressed(pygame.mouse.get_pos()):
-                    # Buy func goes here
-                    print("Buy")
-                elif self.sell.pressed(pygame.mouse.get_pos()):
-                    # Sell func goes here
-                    print("Sell")
-                elif self.roll.pressed(pygame.mouse.get_pos()):
-                    print("Roll")
+    main = Main()
+    main.run()
