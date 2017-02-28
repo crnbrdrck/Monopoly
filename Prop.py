@@ -1,12 +1,9 @@
 class Prop:
-    _CURRENT_ID = 0
 
     def __init__ (self, name, price):
         self.__name = name
         self.__price = price
         self.__owner = None
-        self._id = Player._CURRENT_ID
-        Player._CURRENT_ID += 1
 
     def getOwner(self):
         return self.__name
