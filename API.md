@@ -261,12 +261,12 @@ These commands are used to inform clients of an update to the state
 ```python
 {
     "command": "JAIL",
-    "values: {
+    "values": {
         "player": int player_id
     }
 }
 ```
-- Instructs the clients that the player _player_id_ has been sent to jail
+- Instructs the clients that the player _player_id_ has been sent to jail, or freed from jail
 
 ### Pay
 ```python
