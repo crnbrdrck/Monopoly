@@ -96,7 +96,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instructs the server to start the game
 - Anyone can send this message, it will only work if there are 2 or more players joined
-- **Returns: [START](#start-1)**
+- **Returns: [START](#start-1) / Failure**
 
 ### Roll
 ```python
