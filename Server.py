@@ -3,6 +3,7 @@ from select import select
 from socket import *
 from threading import Thread
 
+from Card import Card
 from Player import Player
 
 
@@ -70,7 +71,7 @@ class Server:
         self._main_thread = Thread(target=self._create_listener)
         self._main_thread.start()
 
-    def close(self):
+    def close(self) -> None:
         # Cleanup for testing
         self._created = True
         self._started = True
@@ -81,7 +82,7 @@ class Server:
         Listeners
     """
 
-    def _create_listener(self):
+    def _create_listener(self) -> None:
         # Have the main socket listen for CREATE messages
         self._main_sock.listen(10)
         print("Server Listening for CREATE messages")
@@ -140,7 +141,7 @@ class Server:
         finally:
             return
 
-    def _pre_game_listen(self):
+    def _pre_game_listen(self) -> None:
         # Open the polling socket
         print("Polling socket now open")
         self._polling_thread.start()
@@ -150,7 +151,7 @@ class Server:
         self._main_thread.start()
         self._join_listener()
 
-    def _poll_listener(self):
+    def _poll_listener(self) -> None:
         # Listen for POLL requests
         while not self._started:
             data, addr = self._poll_sock.recvfrom(4096)
@@ -179,7 +180,7 @@ class Server:
         print("Poll Socket Closing")
         return
 
-    def _join_listener(self):
+    def _join_listener(self) -> None:
         """
         Listens for join requests
         """
@@ -224,7 +225,7 @@ class Server:
                     client_sock.sendall('1'.encode())
                     client_sock.close()
 
-    def _start_listener(self):
+    def _start_listener(self) -> None:
         """
         Listens for start request
         """
@@ -246,8 +247,15 @@ class Server:
                     if len(self._player_sockets) >= 2:
                         # Start the game
                         # Send start messages to everybody
-                        msg = self._generate_message('START')
-                        self._send_to_all(msg)
+                        msg = {
+                            'command': 'START',
+                            'values': {
+                                'players': [{player.getId(): player.getUsername()} for player in self._player_sockets]
+                            }
+                        }
+                        for sock, player in self._socket_owners.items():
+                            msg['values']['local'] = player.getId()
+                            sock.sendall(dumps(msg).encode())
                         self._started = True
                     else:
                         raise ValueError()
@@ -259,21 +267,47 @@ class Server:
         Message Sending Methods
     """
 
-    def send_turn(self, player: Player):
+    def send_turn(self, player: Player) -> None:
         # Constructs and sends a TURN message
         msg = self._generate_message('TURN', player=player.getId())
         self._send_to_all(msg)
 
-    def send_goto(self, player: Player, tile: int):
-        # Constructs and sends a GOTO message
-        msg = self._generate_message('TURN', player=player.getId(), tile=tile)
+    def send_roll(self, player: Player, dice: list) -> None:
+        msg = self._generate_message('ROLL', roll=dice)
+        sock = self._player_sockets[player]
+        sock.sendall(msg.encode())
+
+    def send_buy_request(self, player: Player) -> None:
+        msg = self._generate_message('BUY?')
+        sock = self._player_sockets[player]
+        sock.sendall(msg.encode())
+
+    def send_bought(self, player: Player, tile: int) -> None:
+        msg = self._generate_message('BOUGHT', player=player.getId(), tile=tile)
         self._send_to_all(msg)
 
-    def send_pay(self, amount, player_from=None, player_to=None):
+    def send_sold(self, player: Player, tiles: list) -> None:
+        msg = self._generate_message('SOLD', player=player.getId(), tiles=tiles)
+        self._send_to_all(msg)
+
+    def send_goto(self, player: Player, tile: int) -> None:
+        # Constructs and sends a GOTO message
+        msg = self._generate_message('GOTO', player=player.getId(), tile=tile)
+        self._send_to_all(msg)
+
+    def send_jailed(self, player: Player) -> None:
+        """
+        Informs all clients that a player has been sent to or freed from jail
+        :param player: The player who is entering or leaving jail
+        """
+        msg = self._generate_message('JAIL', player=player.getId())
+        self._send_to_all(msg)
+
+    def send_pay(self, amount: int, player_from: Player or None=None, player_to: Player or None=None) -> None:
         # Constructs and sends a PAY message
         try:
             if player_from is None and player_to is None:
-                raise ValueError("Monopoly - PAY: From and To cannot be None together")
+                raise ValueError()
             msg = self._generate_message(
                 'PAY',
                 amount=amount,
@@ -283,22 +317,32 @@ class Server:
         except Exception as e:
             print(e)
 
-    def send_card(self, card):
+    def send_card(self, card: Card) -> None:
         # Constructs and sends a CARD message
         msg = self._generate_message('CARD', text=card.getText(), is_bail=card.isBail())
         self._send_to_all(msg)
 
-    def send_event(self, event_message):
-        # Sends an event message through the CHAT feature
-        msg = self._generate_message('CHAT', player=None, text=event_message)
+    def send_quit(self, player: Player) -> None:
+        msg = self._generate_message('QUIT', player=player.getId())
         self._send_to_all(msg)
 
-    def _send_to_all(self, msg: str):
+    def send_event(self, event_message: str) -> None:
+        # Sends an event message through the CHAT feature
+        self.send_chat(None, event_message)
+
+    def send_chat(self, player: Player or None, message: str) -> None:
+        # Send a chat message from 'player'
+        msg = self._generate_message('CHAT', player=player, text=message)
+        self._send_to_all(msg)
+
+    def _send_to_all(self, msg: str) -> None:
         # Sends 'message' to all players in game
         for sock in self._socket_owners:
-            sock.sendall(msg.encode())
+            msg = msg.encode()
+            sock.sendall(msg)
 
-    def _generate_message(self, command: str, **values: dict):
+    @staticmethod
+    def _generate_message(command: str, **values: dict) -> str:
         # Returns a message dumped with the passed command and values
         return dumps(
             {
