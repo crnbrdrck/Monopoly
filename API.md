@@ -56,7 +56,7 @@ These commands are used by Clients to find and join open games
 - This is used to discover any open games on the network.
 - This is the only message that will be sent and received using UDP, since you cannot broadcast with TCP
 - The value is important to determine that the correct game is being polled for
-- **Returns: [GAME](#game) / Failure**
+- **Returns: [GAME](#game) from every open game on network**
 
 ### Join
 ```python
@@ -96,7 +96,7 @@ These commands are used to pass user input to the server to control the state of
 ```
 - Instructs the server to start the game
 - Anyone can send this message, it will only work if there are 2 or more players joined
-- **Returns: [START](#start-1) / Failure**
+- **Returns: [START](#start-1)**
 
 ### Roll
 ```python
