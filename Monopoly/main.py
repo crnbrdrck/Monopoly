@@ -8,82 +8,118 @@ import Player
 import pygame
 from pygame.locals import *
 
-# Set up Client to send messages
-client = object()
+class Main():
 
-# Set up Chat Window
-chat = ChatWindow.ChatWindow(500, 720)  #, client.send_chat)
+    def __init__(self):
+        self.playerid = None
+        #Can change playerlist to a dictionary if needed
+        self.playerlist = []
+        self.client = object()
+        self.chat = ChatWindow.ChatWindow(500,720)
+        pygame.init()
+        self.DISPLAYSURF = pygame.display.set_mode((1024,720))
+        pygame.display.set_caption("Monopoly")
+        self.DISPLAYSURF.fill((255,255,255))
+        pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (10, 20), (10, 700), 5)
+        pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (10, 700), (790, 700), 5)
+        pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (790, 700), (790, 20), 5)
+        pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (790, 20), (10, 20), 5)
+        boardimg = pygame.image.load('board.jpg')
+        boardx = 30
+        boardy = 30
+        self.DISPLAYSURF.blit(boardimg, (boardx, boardy))
+        self.buy = Button.Button(DISPLAYSURF, 820, 200, 120, 60, "Buy")
+        self.sell = Button.Button(DISPLAYSURF, 820, 120, 120, 60, "Sell")
+        self.roll = Button.Button(DISPLAYSURF, 820, 40, 120, 60, "Roll")
+        self.endturn = Button.Button(DISPLAYSURF, 820, 280, 120, 60, "End turn")
+        self.board = Board.Board()
 
-pygame.init()
+    """def playerroll(self,playernum):
+        player = self.playerlist[playernum]
+        # Get the current tile of the player
+        tile = player.getCurrentTile()
+        # Roll two dice
+        dice = [random.randint(1, 6), random.randint(1, 6)]
+        # Send a chat message to say what happened
+        self.chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
+        player.moveTo(tile + dice[0] + dice[1])"""
 
-# Creating the display surface
-DISPLAYSURF = pygame.display.set_mode((1024, 720))
-pygame.display.set_caption("Monopoly")
-DISPLAYSURF.fill((255, 255, 255))
+    #def roll(self):
+    # inform server player wants to roll
 
-# Drawing the black outline around the game
-pygame.draw.line(DISPLAYSURF, (0, 0, 0), (10, 20), (10, 700), 5)
-pygame.draw.line(DISPLAYSURF, (0, 0, 0), (10, 700), (790, 700), 5)
-pygame.draw.line(DISPLAYSURF, (0, 0, 0), (790, 700), (790, 20), 5)
-pygame.draw.line(DISPLAYSURF, (0, 0, 0), (790, 20), (10, 20), 5)
+    #def quit(self):
+    # inform server player wants to quit
 
-# Display image of board
-boardimg = pygame.image.load('board.jpg')
-boardx = 30
-boardy = 30
-DISPLAYSURF.blit(boardimg, (boardx, boardy))
+    #def start(self):
+    # informs server player wants to start
 
-# Make the buttons
-buy = Button.Button(DISPLAYSURF, 820, 200, 120, 60, "Buy")
-sell = Button.Button(DISPLAYSURF, 820, 120, 120, 60, "Sell")
-roll = Button.Button(DISPLAYSURF, 820, 40, 120, 60, "Roll")
-endturn = Button.Button(DISPLAYSURF, 820, 280, 120, 60, "End turn")
+    #def buy(self):
+    # informs server player wants to buy
 
-# Make the board
-board = Board.Board()
+    #def sell(self):
+    # informs server player wants to sell
 
-# Make a player
+    #def endturn(self):
+    # informs server player wants to end turn
 
-player1 = Player.Player(DISPLAYSURF, (160,30,160), 0, board, "Player 1")
-player2 = Player.Player(DISPLAYSURF, (30,30,30), 1, board, "Player 2")
+    def receiveRoll(self,playernum,dice):
+        player = self.playerlist[playernum]
+        self.chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
+        player.moveTo(tile + dice[0] + dice[1])
 
-# Sample buttons for player movement
-move1 = Button.Button(DISPLAYSURF, 820, 360, 120, 60, "Player 1")
-move2 = Button.Button(DISPLAYSURF, 820, 440, 120, 60, "Player 2")
+    def setmoney(self,playernum,value):
+        player = self.playerlist[playernum]
+        player.setMoney(value)
 
+    def receiveID(self,playerid):
+        self.playerid = playerid
 
-# Functions
-def playerRoll(player):
-    # Get the current tile of the player
-    tile = player.getCurrentTile()
-    # Roll two dice
-    dice = [random.randint(1, 6), random.randint(1, 6)]
-    # Send a chat message to say what happened
-    chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
-    player.moveTo(tile + dice[0] + dice[1])
+    def createplayer(self,colour,number,username):
+        player = Player.Player(self.DISPLAYSURF, colour, number, self.board, username)
+        self.playerlist.append(player)
 
-# Main loop
-while True:
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            chat.destroy()
-            pygame.quit()
-            sys.exit(0)
-        elif event.type == MOUSEBUTTONDOWN:
-            if buy.pressed(pygame.mouse.get_pos()):
-                # Buy func goes here
-                print("buy")
-            elif sell.pressed(pygame.mouse.get_pos()):
-                # Sell function goes here
-                print("sell")
-            elif roll.pressed(pygame.mouse.get_pos()):
-                # Roll function goes here
-                print("Roll")
-            elif endturn.pressed(pygame.mouse.get_pos()):
-                # End turn func goes here
-                print("End turn")
-            elif move1.pressed(pygame.mouse.get_pos()):
-                playerRoll(player1)
-            elif move2.pressed(pygame.mouse.get_pos()):
-                playerRoll(player2)
-    pygame.display.update()
+    #def turn(self,playerid):
+        # receive turn from server
+
+    #def buying(self):
+        # server asks player if it wants to buy
+
+    #def bought(self,playerid,tile):
+        # informs all clients player has bought tile
+
+    #def sold(self,playerid,tiles):
+        # informs all clients player has sold all properties in tiles
+
+    def moveplayer(self,playerid,tile):
+        self.playerlist[playerid].moveTo(tile)
+
+    def jail(self,playerid):
+        if self.playerlist[playerid].inJail():
+            #say hes out of jail
+            self.playerlist[playerid].free()
+        else:
+            self.playerlist[playerid].movetoJail()
+            #say hes in jail
+
+    #def pay(self,playerfrom,playerto,amount):
+        # inform all clients player has from has paid amount to to
+
+    #def hasquit(self,playerid):
+        # inform all clients playernum has quit
+
+if __name__ == "__main__":
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                chat.destroy()
+                pygame.quit()
+                sys.exit(0)
+            elif event.type == MOUSEBUTTONDOWN:
+                if self.buy.pressed(pygame.mouse.get_pos()):
+                    # Buy func goes here
+                    print("Buy")
+                elif self.sell.pressed(pygame.mouse.get_pos()):
+                    # Sell func goes here
+                    print("Sell")
+                elif self.roll.pressed(pygame.mouse.get_pos()):
+                    print("Roll")

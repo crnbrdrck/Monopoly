@@ -21,6 +21,7 @@ class Player:
         self.text = "Player " + str(self.num) + " = $" + str(self.money)
         self.mytext = self.myfont.render(self.text, 1, (0, 0, 0))
         self.surface.blit(self.mytext,(650,(60+(self.num * 20))))
+        self.injail = False
 
         # Non pygame instance vars
         self.tile = 0
@@ -53,3 +54,13 @@ class Player:
         whiterect = pygame.Rect(650,(60+(self.num*20)),120,17)
         pygame.draw.rect(self.surface,(255,255,255),whiterect)
         self.surface.blit(self.mytext, (650, (60 + (self.num * 20))))
+
+    def inJail(self):
+        return self.injail
+
+    def movetoJail(self):
+        player.moveTo(30)
+        self.injail = True
+
+    def free(self):
+        self.injail = False
