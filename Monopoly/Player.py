@@ -8,7 +8,7 @@ class Player:
     num = player number
     board = board object
     '''
-    def __init__(self,surface,colour,num,board):
+    def __init__(self, surface, colour, num, board, username):
         self.num = num
         self.board = board
         self.surface = surface
@@ -17,11 +17,26 @@ class Player:
         self.rect = pygame.Rect(self.coords[0],self.coords[1],10,10)
         pygame.draw.rect(surface,colour,self.rect)
 
+        # Non pygame instance vars
+        self.tile = 0
+        self.username = username
+
     #Draws a white square at previous location
     #Redraws player at new location
     def moveTo(self,tile):
+        # Ensure tile is on board
+        tile %= 40
         whiterect = pygame.Rect(self.coords[0],self.coords[1],10,10)
         pygame.draw.rect(self.surface,(255,255,255),whiterect)
         self.coords = self.board.get_tileslot(tile,self.num)
         self.rect = pygame.Rect(self.coords[0], self.coords[1], 10, 10)
         pygame.draw.rect(self.surface, self.colour, self.rect)
+
+        # Update self.tile
+        self.tile = tile
+
+    def getCurrentTile(self):
+        return self.tile
+
+    def getUsername(self):
+        return self.username
