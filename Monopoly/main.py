@@ -111,14 +111,17 @@ class Main():
         # inform all clients playernum has quit
 
     def displaytile(self,tile):
-        whiterect = pygame.Rect(800, 450, 300, 50)
+        whiterect = pygame.Rect(800, 450, 300, 80)
         pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
         text1 = "Tile selected: "
         text2 = tile.toString()
+        text3 = "Owner: " + tile.getowner()
         mytext1 = self.myfont.render(text1, 1, (0, 0, 0))
         mytext2 = self.myfont.render(text2,1,(0,0,0))
+        mytext3 = self.myfont.render(text3,1,(0,0,0))
         self.DISPLAYSURF.blit(mytext1, (800,450))
         self.DISPLAYSURF.blit(mytext2,(800,475))
+        self.DISPLAYSURF.blit(mytext3,(800,500))
 
     def run(self):
         while True:
