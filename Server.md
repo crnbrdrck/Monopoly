@@ -41,6 +41,12 @@ However, there are a couple of extra things that are worth noting.
         python3 -m Server > nul 2>&1
         ```
 
+# Technical Details
+Below is some of the more technical details about the implementation of the Server.  
+**Proceed with caution**
+
+---
+
 ## Ports in Use
 - 44469 - Main Game Port: Clients will TCP connect to this port
 - 44470 - Polling Port: Clients will `POLL` for servers using this port
