@@ -5,6 +5,38 @@ title: Server
 # Server
 *This class will be used to receive messages from the [Client][1], and inform the [Board][2] of what is received*
 
+## Running The Server Module
+As seen in the [running instructions](.#running-the-game), running the Server is an easy task because of Python's -m flag.
+However, there are a couple of extra things that are worth noting.
+
+- The Server has 3 levels of messages: `INFO`, `WARN` and `ERROR`
+    - `INFO` messages are printed using stdout, and the others using stderr
+    - This allows for control on where the logs appear
+    
+- By default, all messages are printed to the console
+    - This is the typical behaviour of stdout and stderr
+    
+- However, both can be sent to different locations
+    - For example, the following will send any info messages to a file called monopoly.txt and error messages to monopoly_errors.txt:  
+      ```
+        python3 -m Server > monopoly.txt 2> monopoly_errors.txt
+      ```
+    - We can also send both outputs to the same file:  
+      ```
+        python3 -m Server > monopoly.txt 2>&1
+      ```
+    - To append to the file, we use >> instead of >:  
+      ```
+        python3 -m Server >> monopoly.txt 2>&1
+      ```
+      
+- Lastly, the output can be completely hidden
+    - Linux:
+        - `python3 -m Server > /dev/null 2>&1`
+
+    - Windows:
+        - `python3 -m Server > nul 2>&1`
+
 ## Ports in Use
 - 44469 - Main Game Port: Clients will TCP connect to this port
 - 44470 - Polling Port: Clients will `POLL` for servers using this port
