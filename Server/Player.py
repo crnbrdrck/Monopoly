@@ -3,7 +3,7 @@ class Player:
     _CURRENT_ID = 0
 
     def __init__(self, name):
-        self.setUsername()
+        self.setUsername(name)
         self.setBank()
         self.setGo()
         self.setInJail()
@@ -20,7 +20,7 @@ class Player:
         return self.__name
 
     def setBank(self):
-        self.__bankBal = 500
+        self.__bankBal = 1500
 
     def updateBank(self, value):
         self.__bankBal += value
@@ -40,12 +40,14 @@ class Player:
     def setInJail(self):
         self.__inJail = False
 
+    def getInJail(self):
+        return self.__inJail
+
     def updateJailCount(self):
         self.__jailCount += 1
 
     def resetJailCount(self):
         self.__jailCount == 0
-
 
     def getJailCount(self):
         return self.__jailCount
@@ -86,3 +88,6 @@ class Player:
 
     def __eq__(self, obj):
         return isinstance(Player, obj) and self._id == obj.getId()
+
+    def __ne__(self, obj):
+        return not self == obj

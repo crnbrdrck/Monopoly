@@ -1,11 +1,11 @@
 class Prop:
 
-    def __init__ (self, name, price):
+    def __init__(self, name, price):
         self.__name = name
         self.__price = price
         self.__owner = None
 
-    def getOwner(self):
+    def getName(self):
         return self.__name
 
     def getPrice(self):
@@ -22,10 +22,7 @@ class Prop:
         self.__owner = owner
 
     def setUnOwned(self):
-        self.__owner = None:
+        self.__owner = None
 
     def isOwned(self, owner):
-        if self.__owner != None:
-            return True
-        else:
-            return False
+        return self.__owner is not None

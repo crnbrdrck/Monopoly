@@ -11,11 +11,9 @@ try:
 except SystemError:
     stderr.write('Monopoly.Server [ERROR]: Server must be run as a module. Check the README for instructions')
     exit(1)
-try:
-    from .Player import Player
-except SystemError:
-    stderr.write('Monopoly.Server [ERROR]: Server must be run as a module. Check the README for instructions')
-    exit(1)
+# Safe to assume all other local imports will pass
+from .Player import Player
+from .Board import Board
 
 
 class Server:
@@ -37,7 +35,7 @@ class Server:
         self._socket_owners = {}
 
         # Instance of Board class
-        self._board = object()
+        self._board = Board(self)
 
         # Main socket port
         self._main_port = 44469
@@ -139,7 +137,7 @@ class Server:
                         player = Player(username)
 
                         # Send the player to the Board
-                        # self._board.addPlayer(player)
+                        self._board.add_player(player)
 
                         # Store the player socket
                         self._player_sockets[player] = client_sock
@@ -244,7 +242,7 @@ class Server:
                     player = Player(username)
 
                     # Send the player to the Board
-                    # self._board.addPlayer(player)
+                    self._board.add_player(player)
 
                     # Store the player socket
                     self._player_sockets[player] = client_sock

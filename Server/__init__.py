@@ -1,1 +1,1 @@
-__all__ = ['Server']
+__all__ = ['Board', 'Card', 'OtherTile', 'Player', 'Prop', 'Server']
