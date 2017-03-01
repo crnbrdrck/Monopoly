@@ -32,10 +32,14 @@ However, there are a couple of extra things that are worth noting.
       
 - Lastly, the output can be completely hidden
     - Linux:
-        - ```python3 -m Server > /dev/null 2>&1```
+        ```
+        python3 -m Server > /dev/null 2>&1
+        ```
 
     - Windows:
-        - ```python3 -m Server > nul 2>&1```
+        ```
+        python3 -m Server > nul 2>&1
+        ```
 
 ## Ports in Use
 - 44469 - Main Game Port: Clients will TCP connect to this port
