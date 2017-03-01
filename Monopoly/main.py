@@ -17,7 +17,7 @@ class Main():
         self.client = object()
         self.chat = ChatWindow.ChatWindow(500,720)
         pygame.init()
-        self.DISPLAYSURF = pygame.display.set_mode((1024,720))
+        self.DISPLAYSURF = pygame.display.set_mode((1060,720))
         pygame.display.set_caption("Monopoly")
         self.DISPLAYSURF.fill((255,255,255))
         pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (10, 20), (10, 700), 5)
@@ -34,7 +34,7 @@ class Main():
         self.sell = Button.Button(self.DISPLAYSURF, 820, 120, 120, 60, "Sell")
         self.roll = Button.Button(self.DISPLAYSURF, 820, 40, 120, 60, "Roll")
         self.endturn = Button.Button(self.DISPLAYSURF, 820, 280, 120, 60, "End turn")
-        self.myfont = pygame.font.SysFont("Calibri", 25)
+        self.myfont = pygame.font.SysFont("Calibri", 20)
         self.board = Board.Board()
 
     """def playerroll(self,playernum):
@@ -111,11 +111,14 @@ class Main():
         # inform all clients playernum has quit
 
     def displaytile(self,tile):
-        whiterect = pygame.Rect(800, 450, 225, 26)
+        whiterect = pygame.Rect(800, 450, 300, 50)
         pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
-        self.text = "Tile selected: " + tile.toString()
-        self.mytext = self.myfont.render(self.text, 1, (0, 0, 0))
-        self.DISPLAYSURF.blit(self.mytext, (800,450))
+        text1 = "Tile selected: "
+        text2 = tile.toString()
+        mytext1 = self.myfont.render(text1, 1, (0, 0, 0))
+        mytext2 = self.myfont.render(text2,1,(0,0,0))
+        self.DISPLAYSURF.blit(mytext1, (800,450))
+        self.DISPLAYSURF.blit(mytext2,(800,475))
 
     def run(self):
         while True:

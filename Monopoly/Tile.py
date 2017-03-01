@@ -2,8 +2,8 @@
 
 class Tile:
 
-    def __init__(self,num,x,y,width,height):
-        self.num = num
+    def __init__(self,name,x,y,width,height):
+        self.name = name
         self.x = x
         self.y = y
         self.width = width
@@ -35,5 +35,5 @@ class Tile:
             return False
 
     def toString(self):
-        return ("Tile " + str(self.num))
+        return self.name
 
