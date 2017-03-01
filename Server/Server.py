@@ -5,6 +5,8 @@ from socket import *
 from sys import exit, stderr, stdout
 from threading import Thread
 
+# TODO - write a socket subclass that will send all our commands for us, for testing purposes
+
 # Local imports
 try:
     from .Card import Card
