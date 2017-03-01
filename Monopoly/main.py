@@ -34,6 +34,7 @@ class Main():
         self.sell = Button.Button(self.DISPLAYSURF, 820, 120, 120, 60, "Sell")
         self.roll = Button.Button(self.DISPLAYSURF, 820, 40, 120, 60, "Roll")
         self.endturn = Button.Button(self.DISPLAYSURF, 820, 280, 120, 60, "End turn")
+        self.myfont = pygame.font.SysFont("Calibri", 25)
         self.board = Board.Board()
 
     """def playerroll(self,playernum):
@@ -109,6 +110,13 @@ class Main():
     #def hasquit(self,playerid):
         # inform all clients playernum has quit
 
+    def displaytile(self,tile):
+        whiterect = pygame.Rect(800, 450, 225, 26)
+        pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
+        self.text = "Tile selected: " + tile.toString()
+        self.mytext = self.myfont.render(self.text, 1, (0, 0, 0))
+        self.DISPLAYSURF.blit(self.mytext, (800,450))
+
     def run(self):
         while True:
             for event in pygame.event.get():
@@ -125,6 +133,12 @@ class Main():
                         print("Sell")
                     elif self.roll.pressed(pygame.mouse.get_pos()):
                         print("Roll")
+                    elif self.endturn.pressed(pygame.mouse.get_pos()):
+                        print("End Turn")
+                    for tile in self.board.gettiles():
+                        if tile.pressed(pygame.mouse.get_pos()):
+                            self.displaytile(tile)
+
             pygame.display.update()
 
 if __name__ == "__main__":

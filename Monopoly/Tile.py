@@ -2,7 +2,12 @@
 
 class Tile:
 
-    def __init__(self,x,y,width,height):
+    def __init__(self,num,x,y,width,height):
+        self.num = num
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
         self.slots = [None] * 8
         if width >= height :
             for i in range(4):
@@ -21,3 +26,14 @@ class Tile:
 
     def get_slot(self,playernum):
         return self.slots[playernum]
+
+    def pressed(self, mouse):
+        if mouse[0] > self.x and mouse[1] > self.y and mouse[0] < (self.x + self.width) \
+        and mouse[1] < (self.y + self.height):
+            return True
+        else:
+            return False
+
+    def toString(self):
+        return ("Tile " + str(self.num))
+
