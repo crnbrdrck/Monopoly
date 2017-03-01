@@ -1,10 +1,21 @@
+from datetime import datetime
 from json import dumps, loads
 from select import select
 from socket import *
+from sys import exit, stderr, stdout
 from threading import Thread
 
-from Card import Card
-from Player import Player
+# Local imports
+try:
+    from .Card import Card
+except SystemError:
+    stderr.write('Monopoly.Server [ERROR]: Server must be run as a module. Check the README for instructions')
+    exit(1)
+try:
+    from .Player import Player
+except SystemError:
+    stderr.write('Monopoly.Server [ERROR]: Server must be run as a module. Check the README for instructions')
+    exit(1)
 
 
 class Server:
@@ -17,6 +28,7 @@ class Server:
 
     def __init__(self):
         # Set up variables
+        self._log("Server starting up at " + gethostbyname(gethostname()))
 
         # Map of Player objects to sockets
         self._player_sockets = {}
@@ -33,13 +45,12 @@ class Server:
         # Main socket
         main_sock = socket()
         main_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        try:
-            main_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
-        except:
-            pass
         main_sock.setblocking(0)
-        main_sock.bind(('', self._main_port))
-        print("Main Socket Bound")
+        try:
+            main_sock.bind(('', self._main_port))
+        except OSError:
+            self._log('Could not bind main socket to port 44469. Is there a Monopoly Server already running?')
+            exit(1)
         self._main_sock = main_sock
 
         # Polling socket port
@@ -50,10 +61,11 @@ class Server:
         poll_sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
         poll_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
         try:
-            poll_sock.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
-        except:
-            pass
-        poll_sock.bind(('', self._poll_port))
+            poll_sock.bind(('', self._poll_port))
+        except OSError:
+            self._log('Could not bind polling socket to port 44470. Is there a Monopoly Server already running?')
+            exit(1)
+
         self._poll_sock = poll_sock
 
         # Password
@@ -65,16 +77,29 @@ class Server:
         # Started
         self._started = False
 
+        # Serving
+        self._serving = False
+
+        self._closed = False
+
         # Polling Thread
         self._polling_thread = Thread(target=self._poll_listener, daemon=True)
 
+        # Main Thread
         self._main_thread = Thread(target=self._create_listener)
-        self._main_thread.start()
+
+    def serve(self) -> None:
+        if not self._serving:
+            self._main_thread.start()
+            self._serving = True
+            self._main_thread.join()
+        else:
+            self._log('Server.serve has already been called, the server is serving', stderr)
 
     def close(self) -> None:
         # Cleanup for testing
-        self._created = True
-        self._started = True
+        self._log("Server Closing")
+        self._closed = True
         self._main_sock.close()
         self._poll_sock.close()
 
@@ -85,10 +110,12 @@ class Server:
     def _create_listener(self) -> None:
         # Have the main socket listen for CREATE messages
         self._main_sock.listen(10)
-        print("Server Listening for CREATE messages")
+        self._log("Server awaiting valid CREATE message")
 
         try:
             while not self._created:
+                if self._closed:
+                    break
                 connections, w, x = select([self._main_sock], [], [], Server._SELECT_TIMEOUT)
 
                 for conn in connections:
@@ -125,17 +152,18 @@ class Server:
 
                         # Set _created to True to escape loop
                         self._created = True
-                    except ValueError as e:
-                        print(e)
+                    except ValueError:
+                        self._log('Invalid CREATE payload received: ' + message, stderr, 'WARN')
                         client_sock.sendall('1'.encode())
                         client_sock.close()
 
             # Open the server
-            print("Server Open")
-            self._pre_game_listen()
+            if self._created:
+                self._log("Valid CREATE received. Server opening")
+                self._pre_game_listen()
 
         except Exception as e:
-            print("Closing due to exception:", e)
+            self._log("Closing due to exception: " + str(e), stderr)
             self.close()
 
         finally:
@@ -143,7 +171,6 @@ class Server:
 
     def _pre_game_listen(self) -> None:
         # Open the polling socket
-        print("Polling socket now open")
         self._polling_thread.start()
 
         # Make the main socket listen for new things
@@ -154,9 +181,12 @@ class Server:
     def _poll_listener(self) -> None:
         # Listen for POLL requests
         while not self._started:
+            if self._closed:
+                break
             data, addr = self._poll_sock.recvfrom(4096)
+            data = data.decode()
             try:
-                data = loads(data.decode())
+                data = loads(data)
                 # Check for matching API
                 # Check for command value
                 if 'command' not in data or data['command'] != 'POLL':
@@ -175,9 +205,9 @@ class Server:
                 # Send the game data back to the person asking
                 self._poll_sock.sendto(msg.encode(), addr)
 
-            except:
+            except ValueError:
+                self._log('Invalid POLL payload received: ' + data, stderr, 'WARN')
                 self._poll_sock.sendto('1'.encode(), addr)
-        print("Poll Socket Closing")
         return
 
     def _join_listener(self) -> None:
@@ -187,6 +217,8 @@ class Server:
 
         # Check for valid values
         while not self._started:
+            if self._closed:
+                break
             connections, w, x = select([self._main_sock], [], [], Server._SELECT_TIMEOUT)
 
             for conn in connections:
@@ -222,6 +254,7 @@ class Server:
                     client_sock.sendall('0'.encode())
 
                 except ValueError:
+                    self._log('Invalid JOIN payload received: ' + message, stderr, 'WARN')
                     client_sock.sendall('1'.encode())
                     client_sock.close()
 
@@ -232,6 +265,8 @@ class Server:
 
         # Check for valid values
         while not self._started:
+            if self._closed:
+                break
             client_sockets = self._socket_owners.keys()
             connections, w, x = select(client_sockets, [], [], Server._SELECT_TIMEOUT)
 
@@ -258,11 +293,16 @@ class Server:
                             sock.sendall(dumps(msg).encode())
                         self._started = True
                     else:
-                        raise ValueError()
+                        raise AttributeError()
 
                 except ValueError:
+                    self._log('Invalid START payload received: ' + message, stderr, 'WARN')
                     conn.sendall('1'.encode())
-
+                except AttributeError:
+                    self._log('START Request was received without enough players', stderr, 'WARN')
+                    conn.sendall('1'.encode())
+        if not self._closed:
+            self._log("Game starting")
     """
         Message Sending Methods
     """
@@ -314,8 +354,8 @@ class Server:
                 player_from=player_from.getId(),
                 player_to=player_to.getId())
             self._send_to_all(msg)
-        except Exception as e:
-            print(e)
+        except ValueError:
+            self._log('Tried to PAY from the bank to the bank', stderr, 'WARN')
 
     def send_card(self, card: Card) -> None:
         # Constructs and sends a CARD message
@@ -350,3 +390,11 @@ class Server:
                 'values': values
             }
         )
+
+    @staticmethod
+    def _log(msg: str, out=stdout, level=None) -> None:
+        if level is None:
+            level = 'INFO' if out is stdout else 'ERROR'
+        time = datetime.now().strftime('%H:%M:%S.%f')
+        output = '(%s) Monopoly.Server [%s]: %s\n' % (time, level, msg)
+        out.write(output)
