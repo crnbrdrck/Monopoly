@@ -1,4 +1,3 @@
-import random
 import sys
 
 import Board
@@ -123,7 +122,7 @@ class Main():
                         print("Sell")
                     elif self.roll.pressed(pygame.mouse.get_pos()):
                         print("Roll")
-
+            pygame.display.update()
 
 if __name__ == "__main__":
     main = Main()
