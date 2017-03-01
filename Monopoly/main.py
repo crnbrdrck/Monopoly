@@ -34,6 +34,7 @@ class Main():
         self.sell = Button.Button(self.DISPLAYSURF, 820, 120, 120, 60, "Sell")
         self.roll = Button.Button(self.DISPLAYSURF, 820, 40, 120, 60, "Roll")
         self.endturn = Button.Button(self.DISPLAYSURF, 820, 280, 120, 60, "End turn")
+        self.showproperties = Button.Button(self.DISPLAYSURF,820,360,120,60,"Properties")
         self.myfont = pygame.font.SysFont("Calibri", 20)
         self.board = Board.Board()
 
@@ -87,8 +88,9 @@ class Main():
     #def buying(self):
         # server asks player if it wants to buy
 
-    #def bought(self,playerid,tile):
-        # informs all clients player has bought tile
+    def bought(self,playerid,tile):
+        self.playerlist[playerid].addproperty(tile)
+        self.board.gettile(tile).setowner(self.playerlist[playerid].getUsername())
 
     #def sold(self,playerid,tiles):
         # informs all clients player has sold all properties in tiles
@@ -123,6 +125,9 @@ class Main():
         self.DISPLAYSURF.blit(mytext2,(800,475))
         self.DISPLAYSURF.blit(mytext3,(800,500))
 
+    def gettile(self,tileno):
+        return self.board.gettile(tileno)
+
     def run(self):
         while True:
             for event in pygame.event.get():
@@ -141,6 +146,16 @@ class Main():
                         print("Roll")
                     elif self.endturn.pressed(pygame.mouse.get_pos()):
                         print("End Turn")
+                    elif self.showproperties.pressed(pygame.mouse.get_pos()):
+                        #sample
+                        #self.playerid = 0
+                        #self.createplayer((0,0,0),0,"Mutombo")
+                        #self.bought(0,27)
+                        #self.bought(0,34)
+                        player = self.playerlist[self.playerid]
+                        self.chat.send_chat("You own these properties:")
+                        for property in player.getproperties():
+                            self.chat.send_chat("%s" % (self.gettile(property).toString()))
                     for tile in self.board.gettiles():
                         if tile.pressed(pygame.mouse.get_pos()):
                             self.displaytile(tile)

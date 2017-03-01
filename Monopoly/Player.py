@@ -22,6 +22,7 @@ class Player:
         self.mytext = self.myfont.render(self.text, 1, (0, 0, 0))
         self.surface.blit(self.mytext,(650,(60+(self.num * 20))))
         self.injail = False
+        self.properties = []
 
         # Non pygame instance vars
         self.tile = 0
@@ -64,3 +65,12 @@ class Player:
 
     def free(self):
         self.injail = False
+
+    def addproperty(self,tileno):
+        self.properties.append(tileno)
+
+    def removeproperty(self,tileno):
+        self.properties.remove(tileno)
+
+    def getproperties(self):
+        return self.properties

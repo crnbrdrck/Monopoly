@@ -50,3 +50,6 @@ class Board:
 
     def gettiles(self):
         return self.tilelist
+
+    def gettile(self,tileno):
+        return self.tilelist[tileno]
