@@ -1,8 +1,4 @@
-# Card stub for static typing
-class Card:
+ class Card:
 
-    def getText(self):
-        return
-
-    def isBail(self):
-        return False
+    def __init__ (self, typ):
+        self.__type = typ
