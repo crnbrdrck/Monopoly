@@ -16,9 +16,15 @@ To run the game, navigate to the folder you extracted the code into
   
 To run:
 
-Client | Server
------- | ------
-`python3 -m Client` | `python3 -m Server`
+- Client
+  ```bash
+python3 -m Client
+```
+
+- Server
+  ```bash
+python3 -m Server
+```
 
 For more details about running the Server, see [here](Server#running-server-module)
 
