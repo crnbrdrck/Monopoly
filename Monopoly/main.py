@@ -11,6 +11,8 @@ from pygame.locals import *
 class Main():
 
     def __init__(self):
+        self.turn = 0
+        self.myturn = False
         self.playerid = None
         # Can change playerlist to a dictionary if needed
         self.playerlist = []
@@ -37,7 +39,9 @@ class Main():
         self.showproperties = Button.Button(self.DISPLAYSURF,820,360,120,60,"Properties")
         self.myfont = pygame.font.SysFont("Calibri", 20)
         self.board = Board.Board()
-
+        self.turntext = "Turn: Player " + str(self.turn) # Change to username later
+        turntexrendered = self.myfont.render(self.turntext, 1, (0, 0, 0))
+        self.DISPLAYSURF.blit(turntexrendered, (820, 15))
     """def playerroll(self,playernum):
         player = self.playerlist[playernum]
         # Get the current tile of the player
@@ -49,7 +53,8 @@ class Main():
         player.moveTo(tile + dice[0] + dice[1])"""
 
     #def roll(self):
-    # inform server player wants to roll
+        #if self.myturn:
+        # inform server player wants to roll
 
     #def quit(self):
     # inform server player wants to quit
@@ -70,6 +75,8 @@ class Main():
         player = self.playerlist[playernum]
         self.chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
         player.moveTo(tile + dice[0] + dice[1])
+        if dice[0] != dice[1]:
+            self.myturn = False
 
     def setmoney(self,playernum,value):
         player = self.playerlist[playernum]
@@ -84,6 +91,14 @@ class Main():
 
     #def turn(self,playerid):
         # receive turn from server
+        #self.turn = playerid
+        #whiterect = pygame.Rect(820, 15, 200, 20)
+        #pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
+        #self.turntext = "Turn: Player " + str(playerid)
+        #turntexrendered = self.myfont.render(self.turntext, 1, (0, 0, 0))
+        #self.DISPLAYSURF.blit(turntexrendered, (820, 15))
+        #if self.playerid == playerid:
+            #self.myturn = True
 
     #def buying(self):
         # server asks player if it wants to buy
