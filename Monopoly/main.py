@@ -5,13 +5,14 @@ import Button
 import ChatWindow
 import Player
 import pygame
+import os
 from pygame.locals import *
 
 class Main():
 
     def __init__(self):
         self.playerid = None
-        #Can change playerlist to a dictionary if needed
+        # Can change playerlist to a dictionary if needed
         self.playerlist = []
         self.client = object()
         self.chat = ChatWindow.ChatWindow(500,720)
@@ -23,6 +24,8 @@ class Main():
         pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (10, 700), (790, 700), 5)
         pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (790, 700), (790, 20), 5)
         pygame.draw.line(self.DISPLAYSURF, (0, 0, 0), (790, 20), (10, 20), 5)
+        if 'board.jpg' not in os.listdir():
+            os.chdir('Monopoly')
         boardimg = pygame.image.load('board.jpg')
         boardx = 30
         boardy = 30
