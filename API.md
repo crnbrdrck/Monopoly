@@ -322,6 +322,15 @@ These commands are used to inform clients of an update to the state
 - If _username_ is None, the message is directly from the server
 - Else it is from the player named _username_
 
+### Game Over
+```python
+{
+    "command": "GAMEOVER",
+    "values": {}
+}
+```
+- Informs all clients that the game is now over
+
 ## Implementation
 - We intend to have a method in our server to handle all of these messages in separate threads to keep the server running quickly.
 - We will separate our communication and logic into a Server and Board class respectively.
