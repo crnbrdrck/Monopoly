@@ -61,14 +61,7 @@ class Board:
     def add_player(self, player):
         self.__players.append(player)
 
-    def Game(self):
-        for p in __players:
-            if len(self.__players) > 1:
-                self.server.send_turn(p)
-                if p.getBankBal < 0:
-                    self.__players.remove(p)
-            else:
-                self.__winner = p.getUsername
+
 
     def start(self):
         self.current_turn = players[0]
@@ -86,7 +79,7 @@ class Board:
     def end_turn(self, p):
         if p.getBankBal < 0:
             self.__players.remove(p)
-            self.server.send_event("Player %s, is bankrupt and was removed from the game" % p.getUsername)
+            self.server.send_event("Player %s, is bankrupt and was removed from the game" % p.getUsername())
 
             owns = p.ownedProperties()
             self.server.send_sold(owns)
@@ -95,9 +88,9 @@ class Board:
                 prop.setUnOwned()
         if len(players) == 1:
             winner = players[0]
-            self.server.send_event("Player %s won the game with %i in there bank account, game over!" % winner.getUsername, winner.getBankBal)
-        self.current_turn += 1
-        elif self.current_turn == len(players):
+            self.server.send_event("Player %s won the game with %i in there bank account, game over!" % winner.getUsername(), winner.getBankBal())
+        self.currentTurn += 1
+        if self.current_turn == len(players):
             self.current_turn = players[0]
 
 
@@ -108,17 +101,17 @@ class Board:
             #player has passed g0
             player.updateBank(200)
             self.server.send_pay(200, None, player)
-            pos = player.getPos():
+            pos = player.getPos()
             pos = pos % 40
             player.movePosition(pos)
             self.server.got(player, pos)
 
-        else if player.getPos == 30:
+        elif player.getPos == 30:
             player.goToJail()
             player.movePosition(10)
             self.server.got(player, 10)
             if player.hasJailCard():
-                player.useJailCard():
+                player.useJailCard()
             elif player.getJailCount() > 3:
                 player.getOutOfJail()
                 player.resetJailCount()
@@ -127,7 +120,7 @@ class Board:
         elif player.getPos() in [2,7,17,22,33,36]:
             if player.getPos() in [2, 17, 33]:
                 return 0
-            else if players.getPos() in [7,22,36]:
+            elif players.getPos() in [7,22,36]:
                 return 0
         elif player.getPos() == 4 or 38:
             player.updateBank(-200)
@@ -147,11 +140,11 @@ class Board:
                         o.updateBank(rent)
                         player.updateBank(rent * -1)
                         self.server.send_pay(rent, player, o )
-            else if not prop.isOwned():
+            elif not prop.isOwned():
                 self.server.send_buy_request()
 
         def handle_buy(self, player):
-            pos = player.getPos:
+            pos = player.getPos()
             prop = Properties[pos]
             prop.setOwner(player)
             player.addOwnProp(prop)

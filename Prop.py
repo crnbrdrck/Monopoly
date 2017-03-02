@@ -22,7 +22,7 @@ class Prop:
         self.__owner = owner
 
     def setUnOwned(self):
-        self.__owner = None:
+        self.__owner = None
 
     def isOwned(self, owner):
         if self.__owner != None:
