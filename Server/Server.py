@@ -78,7 +78,11 @@ class Server:
         # Serving
         self._serving = False
 
+        # Closed
         self._closed = False
+
+        # Finished
+        self._finished = False
 
         # Polling Thread
         self._polling_thread = Thread(target=self._poll_listener, daemon=True)
@@ -95,11 +99,18 @@ class Server:
             self._log('Server.serve has already been called, the server is serving', stderr)
 
     def close(self) -> None:
-        # Cleanup for testing
+        # Cleanup
         self._log("Server Closing")
         self._closed = True
         self._main_sock.close()
         self._poll_sock.close()
+
+    def end_game(self) -> None:
+        # End the game after a winner has been chosen
+        # Will end loop in self._main_listener, which will then call self.close
+        msg = self._generate_message('GAMEOVER')
+        self._send_to_all(msg)
+        self._finished = True
 
     """
         Listeners
@@ -144,7 +155,7 @@ class Server:
                         self._socket_owners[client_sock] = player
 
                         # Inform the client of success
-                        client_sock.sendall('0'.encode())
+                        client_sock.sendall('1'.encode())
 
                         # Don't close client_sock since we'll be using it to communicate with the client
 
@@ -152,7 +163,7 @@ class Server:
                         self._created = True
                     except ValueError:
                         self._log('Invalid CREATE payload received: ' + message, stderr, 'WARN')
-                        client_sock.sendall('1'.encode())
+                        client_sock.sendall('0'.encode())
                         client_sock.close()
 
             # Open the server
@@ -205,7 +216,7 @@ class Server:
 
             except ValueError:
                 self._log('Invalid POLL payload received: ' + data, stderr, 'WARN')
-                self._poll_sock.sendto('1'.encode(), addr)
+                self._poll_sock.sendto('0'.encode(), addr)
         return
 
     def _join_listener(self) -> None:
@@ -249,11 +260,11 @@ class Server:
                     self._socket_owners[client_sock] = player
 
                     # Inform the client of success
-                    client_sock.sendall('0'.encode())
+                    client_sock.sendall('1'.encode())
 
                 except ValueError:
                     self._log('Invalid JOIN payload received: ' + message, stderr, 'WARN')
-                    client_sock.sendall('1'.encode())
+                    client_sock.sendall('0'.encode())
                     client_sock.close()
 
     def _start_listener(self) -> None:
@@ -295,12 +306,95 @@ class Server:
 
                 except ValueError:
                     self._log('Invalid START payload received: ' + message, stderr, 'WARN')
-                    conn.sendall('1'.encode())
+                    conn.sendall('0'.encode())
                 except AttributeError:
                     self._log('START Request was received without enough players', stderr, 'WARN')
-                    conn.sendall('1'.encode())
+                    conn.sendall('0'.encode())
+
         if not self._closed:
             self._log("Game starting")
+            self._board.start()
+            self._main_thread = Thread(target=self._main_listener)
+            self._main_thread.start()
+
+    def _main_listener(self) -> None:
+        """
+        The main listener for the game itself
+        """
+        while not self._finished:
+            if self._closed:
+                break
+            # Await connections
+            client_sockets = self._socket_owners.keys()
+            connections, w, x = select(client_sockets, [], [], Server._SELECT_TIMEOUT)
+
+            for conn in connections:
+                message = ''
+                try:
+                    player = self._socket_owners[conn]
+                    message = conn.recv(4096).decode()
+                    data = loads(message)
+                    Thread(target=self._handle_game_message, args=(data, player), daemon=True).start()
+                except ValueError:
+                    if message:
+                        if len(message.split('}{')) == 1:
+                            self._log("Invalid JSON string received: " + message, stderr, "WARN")
+                        else:
+                            self._log("Combined JSON payloads received: " + message, stderr, "WARN")
+                            messages = message.split('}{')
+                            messages[0] += '}'
+                            messages[-1] = '{' + messages[-1]
+                            for i, payload in enumerate(messages[1: -1]):
+                                messages[i] = '{' + payload + '}'
+                            for message in messages:
+                                try:
+                                    message = loads(message)
+                                    Thread(
+                                        target=self._handle_game_message,
+                                        args=(message, player),
+                                        daemon=True
+                                    ).start()
+                                except ValueError:
+                                    self._log("Invalid JSON string received: " + message, stderr, "WARN")
+
+                except KeyError:
+                    self._log("Received message from unknown socket", stderr, "WARN")
+                except ConnectionResetError:
+                    # Remove the player
+                    player = self._socket_owners[conn]
+                    self._socket_owners.pop(conn)
+                    self._player_sockets.pop(player)
+
+        if not self._closed:
+            self.close()
+
+    def _handle_game_message(self, payload, player) -> None:
+        try:
+            # Run through all the possible api commands and run the appropriate function
+            if 'command' not in payload:
+                raise ValueError()
+
+            command = payload['command']
+
+            if command == 'ROLL':
+                self._board.handle_roll(player)
+            elif command == 'BUY':
+                if payload['values']['buy'] == 1:
+                    self._board.handle_buy(player)
+            elif command == 'SELL':
+                # Not implemented yet
+                pass
+            elif command == 'CHAT':
+                text = payload['values']['text']
+                self.send_chat(player, text)
+            elif command == 'END':
+                self._board.handle_end(player)
+            else:
+                raise ValueError()
+
+        except (ValueError, KeyError):
+            self._log("Invalid game command received: " + payload, stderr, "WARN")
+
     """
         Message Sending Methods
     """
@@ -375,8 +469,8 @@ class Server:
 
     def _send_to_all(self, msg: str) -> None:
         # Sends 'message' to all players in game
+        msg = msg.encode()
         for sock in self._socket_owners:
-            msg = msg.encode()
             sock.sendall(msg)
 
     @staticmethod
