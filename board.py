@@ -4,7 +4,6 @@ import Prop
 import Card
 import Player
 
-#Test
 
 class Board:
     def __init__ (self, server):
