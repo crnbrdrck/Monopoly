@@ -13,7 +13,8 @@ class Prop:
 
     def getRent(self):
         rent = self.__price * .12
-        return rent
+        # Ensure int TODO - Add rent to constructor
+        return rent // 1
 
     def getOwner(self):
         return self.__owner
@@ -24,5 +25,11 @@ class Prop:
     def setUnOwned(self):
         self.__owner = None
 
-    def isOwned(self, owner):
+    def isOwned(self):
         return self.__owner is not None
+
+    def __repr__(self):
+        return self.__name
+
+    def __eq__(self, obj):
+        return isinstance(obj, Prop) and self.__name == obj.getName()
