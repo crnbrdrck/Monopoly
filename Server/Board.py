@@ -1,7 +1,9 @@
 from random import randint
+
 from .Card import Card
 from .OtherTile import OtherTile
 from .Prop import Prop
+
 
 class Board:
     def __init__ (self, server):

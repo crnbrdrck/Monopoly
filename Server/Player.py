@@ -8,10 +8,13 @@ class Player:
         self.setGo()
         self.setInJail()
         self.setGetOutOfJailFreeCard()
-        self._id = Player._CURRENT_ID
+        self.__id = Player._CURRENT_ID
         self.__jailCount = 0
         Player._CURRENT_ID += 1
         self.__ownedProperties = []
+
+    def getId(self):
+        return self.__id
 
     def setUsername(self, name):
         self.__name = name
@@ -84,10 +87,10 @@ class Player:
         self.__ownedProperties.remove(prop)
 
     def __hash__(self):
-        return self._id
+        return self.__id
 
     def __eq__(self, obj):
-        return isinstance(Player, obj) and self._id == obj.getId()
+        return isinstance(Player, obj) and self.__id == obj.getId()
 
     def __ne__(self, obj):
         return not self == obj

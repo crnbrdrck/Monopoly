@@ -5,8 +5,6 @@ from socket import *
 from sys import exit, stderr, stdout
 from threading import Thread
 
-# TODO - write a socket subclass that will send all our commands for us, for testing purposes
-
 # Local imports
 try:
     from .Card import Card
@@ -351,8 +349,8 @@ class Server:
             msg = self._generate_message(
                 'PAY',
                 amount=amount,
-                player_from=player_from.getId(),
-                player_to=player_to.getId())
+                player_from=player_from.getId() if player_from is not None else None,
+                player_to=player_to.getId() if player_to is not None else None)
             self._send_to_all(msg)
         except ValueError:
             self._log('Tried to PAY from the bank to the bank', stderr, 'WARN')
