@@ -123,7 +123,7 @@ class Main():
             self.playerlist[playerid].movetoJail()
             #say hes in jail
 
-    def pay(self,playerfrom,playerto = "Bank",amount):
+    def pay(self,playerfrom,amount,playerto = "Bank"):
         pfrom = self.playerlist[playerfrom]
         current = pfrom.getmoney() - amount
         pfrom.setMoney(current)
