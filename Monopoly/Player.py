@@ -48,6 +48,9 @@ class Player:
     def getUsername(self):
         return self.username
 
+    def getmoney(self):
+        return self.money
+
     def setMoney(self,value):
         self.money = value
         self.text = "Player " + str(self.num) + " = $" + str(self.money)

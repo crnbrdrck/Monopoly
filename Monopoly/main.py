@@ -107,8 +107,10 @@ class Main():
         self.playerlist[playerid].addproperty(tile)
         self.board.gettile(tile).setowner(self.playerlist[playerid].getUsername())
 
-    #def sold(self,playerid,tiles):
-        # informs all clients player has sold all properties in tiles
+    def sold(self,playerid,tiles,owner = "None"):
+        for tile in tiles:
+            self.playerlist[playerid].removeproperty(tile)
+            self.board.gettile(tile).setowner = owner
 
     def moveplayer(self,playerid,tile):
         self.playerlist[playerid].moveTo(tile)
@@ -121,11 +123,18 @@ class Main():
             self.playerlist[playerid].movetoJail()
             #say hes in jail
 
-    #def pay(self,playerfrom,playerto,amount):
-        # inform all clients player has from has paid amount to to
+    def pay(self,playerfrom,playerto = "Bank",amount):
+        pfrom = self.playerlist[playerfrom]
+        current = pfrom.getmoney() - amount
+        pfrom.setMoney(current)
+        if playerto != "Bank":
+            pto = self.playerlist[playerto]
+            current = pto.getmoney() + amount
+            pto.setMoney(current)
 
-    #def hasquit(self,playerid):
-        # inform all clients playernum has quit
+    def hasquit(self,playerid):
+        player = self.playerlist[playerid]
+        self.chat.send_chat("Player %s has quit" % (player.getUsername()))
 
     def displaytile(self,tile):
         whiterect = pygame.Rect(800, 450, 300, 80)
