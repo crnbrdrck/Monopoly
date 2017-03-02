@@ -20,8 +20,8 @@ Our API between server and client is based on a simple JSON structure
 ## Note: Success / Failure
 When a message below says **Returns: Success / Failure**, expect the following:
 
-- The string `'0'` in case of a success
-- The string `'1'` in case of a failure
+- The string `'1'` in case of a success
+- The string `'0'` in case of a failure
 
 ## Game Discovery Commands
 These commands are used by Clients to find and join open games
@@ -113,7 +113,7 @@ These commands are used to pass user input to the server to control the state of
 {
     "command": "BUY",
     "values": {
-        "buy": 0 or 1 for YES or NO
+        "buy": 1 or 0 for YES or NO
     }
 }
 ```
