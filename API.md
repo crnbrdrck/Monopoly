@@ -179,7 +179,7 @@ These commands are used to inform clients of an update to the state
 {
     "command": "START",
     "values": {
-        "players": [{int player.id: str player.name} for player in players]
+        "players": {int player.id: str player.name for player in players}
         "local": int local_player_id
     }
 }
