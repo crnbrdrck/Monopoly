@@ -6,6 +6,7 @@ import ChatWindow
 import Player
 import pygame
 import os
+import random
 from pygame.locals import *
 
 class Main():
@@ -73,6 +74,11 @@ class Main():
     #def endturn(self):
     # informs server player wants to end turn
 
+    def startgame(self,players,localid):
+        for playerid in players:
+            self.createplayer(playerid,players[playerid])
+        self.playerid = localid
+
     def receiveRoll(self,playernum,dice):
         player = self.playerlist[playernum]
         self.chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
@@ -87,7 +93,8 @@ class Main():
     def receiveID(self,playerid):
         self.playerid = playerid
 
-    def createplayer(self,colour,number,username):
+    def createplayer(self,number,username):
+        colour = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
         player = Player.Player(self.DISPLAYSURF, colour, number, self.board, username)
         self.playerlist.append(player)
 
@@ -189,6 +196,7 @@ class Main():
                         if not self.started:
                             self.started = True
                             print("Start")
+                            self.startgame({0:"Juan",1:"elmer"},0)
                     for tile in self.board.gettiles():
                         if tile.pressed(pygame.mouse.get_pos()):
                             self.displaytile(tile)
