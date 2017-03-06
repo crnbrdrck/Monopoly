@@ -294,7 +294,7 @@ class Server:
                         msg = {
                             'command': 'START',
                             'values': {
-                                'players': [{player.getId(): player.getUsername()} for player in self._player_sockets]
+                                'players': {player.getId(): player.getUsername() for player in self._player_sockets}
                             }
                         }
                         for sock, player in self._socket_owners.items():
