@@ -14,6 +14,7 @@ class Main():
         self.turn = 0
         self.myturn = False
         self.playerid = None
+        self.started = False
         # Can change playerlist to a dictionary if needed
         self.playerlist = []
         self.client = object()
@@ -37,6 +38,7 @@ class Main():
         self.roll = Button.Button(self.DISPLAYSURF, 820, 40, 120, 60, "Roll")
         self.endturn = Button.Button(self.DISPLAYSURF, 820, 280, 120, 60, "End turn")
         self.showproperties = Button.Button(self.DISPLAYSURF,820,360,120,60,"Properties")
+        self.startbutton = Button.Button(self.DISPLAYSURF,820,550,120,60,"Start")
         self.myfont = pygame.font.SysFont("Calibri", 20)
         self.board = Board.Board()
         self.turntext = "Turn: Player " + str(self.turn) # Change to username later
@@ -154,6 +156,9 @@ class Main():
 
     def run(self):
         while True:
+            if self.started:
+                whiterect = pygame.Rect(820, 550, 120, 60)
+                pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.chat.destroy()
@@ -172,14 +177,18 @@ class Main():
                         print("End Turn")
                     elif self.showproperties.pressed(pygame.mouse.get_pos()):
                         #sample
-                        #self.playerid = 0
-                        #self.createplayer((0,0,0),0,"Mutombo")
-                        #self.bought(0,27)
-                        #self.bought(0,34)
+                        self.playerid = 0
+                        self.createplayer((0,0,0),0,"Mutombo")
+                        self.bought(0,27)
+                        self.bought(0,34)
                         player = self.playerlist[self.playerid]
                         self.chat.send_chat("You own these properties:")
                         for property in player.getproperties():
                             self.chat.send_chat("%s" % (self.gettile(property).toString()))
+                    elif self.startbutton.pressed(pygame.mouse.get_pos()):
+                        if not self.started:
+                            self.started = True
+                            print("Start")
                     for tile in self.board.gettiles():
                         if tile.pressed(pygame.mouse.get_pos()):
                             self.displaytile(tile)

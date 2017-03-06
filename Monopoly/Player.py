@@ -70,7 +70,8 @@ class Player:
         self.injail = False
 
     def addproperty(self,tileno):
-        self.properties.append(tileno)
+        if tileno not in self.properties:
+            self.properties.append(tileno)
 
     def removeproperty(self,tileno):
         self.properties.remove(tileno)

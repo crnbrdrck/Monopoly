@@ -15,7 +15,7 @@ class Button:
     def __init__(self,surface,x,y,width,height,text):
         self.rect = pygame.Rect(x,y,width,height)
         pygame.draw.rect(surface,(150,150,255),self.rect)
-        font_size = int(width // len(text))
+        font_size = 20
         myFont = pygame.font.SysFont("Calibri", font_size)
         myText = myFont.render(text, 1, (0,0,0))
         surface.blit(myText, ((x + width / 2) - myText.get_width() / 2, (y + height / 2) - myText.get_height() / 2))
