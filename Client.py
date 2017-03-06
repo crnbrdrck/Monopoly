@@ -1,6 +1,3 @@
-#todo
-#-update
-#-gui stuff
 import json
 from select import select
 from socket import *
