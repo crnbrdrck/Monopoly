@@ -55,9 +55,14 @@ class Main():
         self.chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
         player.moveTo(tile + dice[0] + dice[1])"""
 
+    #def askroll(self):
+        #asks server for a roll
+
     #def roll(self):
         #if self.myturn:
-        # inform server player wants to roll
+            #askroll
+            #receiveroll?
+
 
     #def quit(self):
     # inform server player wants to quit
@@ -79,12 +84,8 @@ class Main():
             self.createplayer(playerid,players[playerid])
         self.playerid = localid
 
-    def receiveRoll(self,playernum,dice):
-        player = self.playerlist[playernum]
-        self.chat.send_chat('%s just rolled %i (%i, %i)' % (player.getUsername(), dice[0] + dice[1], dice[0], dice[1]))
-        player.moveTo(tile + dice[0] + dice[1])
-        if dice[0] != dice[1]:
-            self.myturn = False
+    #def receiveroll(self,dice):
+        #returns tuple containing the results of two dice rolls
 
     def setmoney(self,playernum,value):
         player = self.playerlist[playernum]
@@ -140,6 +141,11 @@ class Main():
             pto = self.playerlist[playerto]
             current = pto.getmoney() + amount
             pto.setMoney(current)
+
+    #def receivecard(self,text,is_bail = False):
+        #self.chat.send_chat("You have received a card: " % (text))
+        #f is_bail:
+            #client recieves a out of jail free card
 
     def hasquit(self,playerid):
         player = self.playerlist[playerid]
