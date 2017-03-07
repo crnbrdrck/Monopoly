@@ -75,12 +75,12 @@ def run_game(sock: TestClient, pid: int):
                     break
                 elif data['command'] == 'ROLL' and data['values']['roll'][0] == data['values']['roll'][1]:
                     stdout.write('Player %i> Rolled Doubles\n' % (pid + 1))
-                    sock.send_roll()
+                    Timer(2, sock.send_roll).start()
                 else:
                     if turn:
                         turn = False
                         end_timer.cancel()
-                        end_timer = Timer(2, sock.send_end)
+                        end_timer = Timer(4, sock.send_end)
                         end_timer.start()
                     else:
                         # Just ignore the message

@@ -93,7 +93,8 @@ class Board:
             Card("Kiss the Blarney Stone", False,
                  lambda player, board: board.player_move(player, 79 - player.getPos())),
             Card("Repay everyone's water tax. Pay each player €50", False,
-                 lambda player, board: [(player.updateBank(-50), board.server.send_pay(50, player, other))
+                 lambda player, board: [(player.updateBank(-50), other.updateBank(50),
+                                         board.server.send_pay(50, player, other))
                                         for other in board.__players if other != player]
                  ),
             Card("You have won a GAA Lottery. Collect €100", False,
@@ -119,7 +120,8 @@ class Board:
             Card("Sold your iPhone 4 on DoneDeal. Collect €50", False,
                  lambda player, board: (player.updateBank(50), board.server.send_pay(50, player, None))),
             Card("You run an underground rave. Collect €50 from every player.", False,
-                 lambda player, board: [(player.updateBank(50), board.server.send_pay(50, player, other))
+                 lambda player, board: [(player.updateBank(50), other.updateBank(-50),
+                                         board.server.send_pay(50, player, other))
                                         for other in board.__players if other != player]
                  ),
             Card("Christmas Dole Bonus. Collect €100", False,
@@ -131,7 +133,8 @@ class Board:
             Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200", False,
                  lambda player, board: board.send_to_jail(player)),
             Card("It's your birthday, collect €10 from each player", False,
-                 lambda player, board: [(player.updateBank(10), board.server.send_pay(10, other, player))
+                 lambda player, board: [(player.updateBank(10), other.updateBank(-10),
+                                         board.server.send_pay(10, other, player))
                                         for other in board.__players if other != player]
                  ),
             Card("Life insurance matures. Collect €100", False,
@@ -251,10 +254,15 @@ class Board:
             self.__comm_chest.append(card)
 
         # Player landed on tax
-        elif pos in [4, 38]:
+        elif pos == 4:
             player.updateBank(-200)
             self.server.send_pay(200, player, None)
             self.__freeParking += 200
+
+        elif pos == 38:
+            player.updateBank(-100)
+            self.server.send_pay(100, player, None)
+            self.__freeParking += 100
 
         # Player landed on free parking
         elif pos == 20:
@@ -268,6 +276,7 @@ class Board:
 
         # No special tile, normal property
         else:
+            self.server.send_event("Landed on pos %i" % player.getPos())
             prop = self.__properties[pos]
             if prop.isOwned():
                 owner = prop.getOwner()
