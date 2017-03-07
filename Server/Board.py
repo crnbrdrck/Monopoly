@@ -247,11 +247,15 @@ class Board:
             self.server.send_event("%s drew a Community Chest card: %s" % (player.getUsername(), card.getText()))
             card.action(player, self)
             self.__comm_chest.append(card)
+            if card.isBail():
+                player.getJailCard()
         elif pos in [7, 22, 36]:
             card = self.__comm_chest.popleft()
             self.server.send_event("%s drew a Chance card: %s" % (player.getUsername(), card.getText()))
             card.action(player, self)
             self.__comm_chest.append(card)
+            if card.isBail():
+                player.getJailCard()
 
         # Player landed on tax
         elif pos == 4:
