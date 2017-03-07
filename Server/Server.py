@@ -43,7 +43,6 @@ class Server:
         # Main socket
         main_sock = socket()
         main_sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-        main_sock.setblocking(0)
         try:
             main_sock.bind(('', self._main_port))
         except OSError:
@@ -217,6 +216,8 @@ class Server:
             except ValueError:
                 self._log('Invalid POLL payload received: ' + data, stderr, 'WARN')
                 self._poll_sock.sendto('0'.encode(), addr)
+            except OSError:
+                break
         return
 
     def _join_listener(self) -> None:
