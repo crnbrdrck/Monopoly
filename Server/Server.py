@@ -191,9 +191,9 @@ class Server:
         while not self._started:
             if self._closed:
                 break
-            data, addr = self._poll_sock.recvfrom(4096)
-            data = data.decode()
             try:
+                data, addr = self._poll_sock.recvfrom(4096)
+                data = data.decode()
                 data = loads(data)
                 # Check for matching API
                 # Check for command value
