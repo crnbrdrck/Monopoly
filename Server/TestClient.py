@@ -73,6 +73,9 @@ def run_game(sock: TestClient, pid: int):
                     sock.send_buy(True)
                 elif data['command'] == 'GAMEOVER':
                     break
+                elif data['command'] == 'ROLL' and data['values']['roll'][0] == data['values']['roll'][1]:
+                    stdout.write('Player %i> Rolled Doubles\n' % (pid + 1))
+                    sock.send_roll()
                 else:
                     if turn:
                         turn = False

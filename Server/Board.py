@@ -68,7 +68,6 @@ class Board:
     def initialise_cards(self):
         # Chance cards
         chance = [
-            # TODO - Make lambdas
             Card("Advance to Go. Collect €200", False,
                  lambda player, board: board.player_move(player, 40 - player.getPos())),
             Card("Go to Fota Wildlife Park", False,
@@ -202,7 +201,7 @@ class Board:
         self.__current_doubles = 0
         if player.getBankBal() < 0:
             self.__players.remove(player)
-            self.server.send_event("Player %s is bankrupt and was removed from the game" % player.getUsername())
+            self.server.send_event("Player \"%s\" is bankrupt and was removed from the game" % player.getUsername())
             owns = [self.__properties.index(prop) for prop in player.getOwnedProperties()]
             self.server.send_sold(player, owns)
             for prop_id in owns:
@@ -210,7 +209,7 @@ class Board:
 
         if len(self.__players) == 1:
             winner = self.__players[0]
-            self.server.send_event("Player %s won the game with %i in their bank account, game over!" % (
+            self.server.send_event("Player \"%s\" won the game with %i in their bank account, game over!" % (
                 winner.getUsername(), winner.getBankBal()))
             self.server.end_game()
         self.__current_turn = (self.__current_turn + 1) % len(self.__players)
