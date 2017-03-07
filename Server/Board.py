@@ -276,7 +276,6 @@ class Board:
 
         # No special tile, normal property
         else:
-            self.server.send_event("Landed on pos %i" % player.getPos())
             prop = self.__properties[pos]
             if prop.isOwned():
                 owner = prop.getOwner()
