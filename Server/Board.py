@@ -1,4 +1,5 @@
-from random import randint
+from collections import deque
+from random import randint, shuffle
 
 from .Card import Card
 from .OtherTile import OtherTile
@@ -6,7 +7,6 @@ from .Prop import Prop
 
 
 class Board:
-    # TODO - Send events for all messages
     def __init__(self, server):
         self.server = server
         self.__players = []
@@ -15,8 +15,11 @@ class Board:
         self.__winner = None
         self.__freeParking = 0
         self.__properties = []
+        self.__chance = None
+        self.__comm_chest = None
         self.curr_round = 0
         self.initialise_board()
+        self.initalise_cards()
 
     def initialise_board(self):
         self.__properties = [
@@ -61,6 +64,56 @@ class Board:
             OtherTile("Bank Deposit"),                     # 38
             Prop("Blarney Castle", 400)                    # 39
         ]
+
+    def initialise_cards(self):
+        # Chance cards
+        chance = [
+            # TODO - Make lambdas
+            Card("Advance to Go. Collect €200", False, "goto 0"),
+            Card("Go to Fota Wildlife Park", False, "goto 24"),
+            Card("Go to Cork Racecourse Mallow", False, "goto 11"),
+            Card("Go to The Lifetime Lab", False, "goto 28"),
+            Card("Go to Kent Station", False, "goto 5"),
+            Card("The bank finally has your money. Collect €50", False, "pay from None amount 50"),
+            Card("Get out of jail free. This card may be kept until needed", True, "bail"),
+            Card("Go back 3 spaces", False, "goto -3"),
+            Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200",
+                 False, "to_jail"),
+            Card("Pay poor tax of €15", False, "pay to None amount 15"),
+            Card("Take a kayak. Go to the Port of Cork", False, "goto 35"),
+            Card("Kiss the Blarney Stone", False, "goto 39"),
+            Card("Repay everyone's water tax. Pay each player €50", False, "pay each 50"),
+            Card("You have won a GAA Lottery. Collect €100", False, "collect 100"),
+            Card("You were caught drinking in public. Pay €75", False, "pay 75"),
+            Card("You collect the dole. Collect €50", False, "collect 50"),
+            Card("Netflix subscription due. Pay €10", False, "pay 10"),
+            Card("Your free texts expired. Pay €20", False, "pay 20"),
+        ]
+        shuffle(chance)
+        self.__chance = deque(chance)
+        community_chest = [
+            Card("Advance to Go. Collect €200", False, "goto 0"),
+            Card("Bank error in your favor", False, "collect 200"),
+            Card("Southdoc Fee. Pay €80", False, "pay 80"),
+            Card("Sold your iPhone 4 on DoneDeal. Collect €50", False, "collect 50"),
+            Card("You run an underground rave. Collect €50 from every player.", False, "goto 50 each"),
+            Card("Christmas Dole Bonus. Collect €100", False, "collect 100"),
+            Card("Get out of jail free. This card may be kept until needed", True, None),
+            Card("You got tax back boi. Collect €20", False, "collect 20"),
+            Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200",
+                 False, "to_jail"),
+            Card("It's your birthday, collect 10 from each player", False, "collect 10 each"),
+            Card("Life insurance matures. Collect €100", False, "collect 100"),
+            Card("You hit your head on a night out. You need 10 stiches. Pay hospital €100", False, "pay 100"),
+            Card("Your son broke a window in school. Pay the school €150", False, "pay 150"),
+            Card("You sold a 25 bag. Collect €25", False, "collect 25"),
+            Card("You horse came second. Collect €20 from the bookies", False, "collect 20"),
+            Card("You visit your grandparents. Collect €100", False, "collect 100"),
+            Card("Enda needs more funds for his event center. Pay €100", False, "pay 50"),
+            Card("You won the 96FM CashCall. Collect €100.", False)
+        ]
+        shuffle(community_chest)
+        self.__comm_chest = community_chest
 
     def add_player(self, player):
         self.__players.append(player)
