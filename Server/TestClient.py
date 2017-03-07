@@ -68,6 +68,7 @@ def run_game(sock: TestClient, pid: int):
                 elif data['command'] == 'TURN':
                     if data['values']['player'] == pid:
                         turn = True
+                        stdout.write("Player %i> It's my turn\n" % (pid + 1))
                         sock.send_roll()
                 elif data['command'] == 'BUY?':
                     sock.send_buy(True)
@@ -88,6 +89,7 @@ def run_game(sock: TestClient, pid: int):
         except:
             stdout.write("%i got exception %s\n" % (pid, str(exc_info())))
             break
+    return
 
 
 def run_test():
@@ -112,9 +114,9 @@ def run_test():
     assert loads(player1.recv(4096).decode()).get('command', None) == 'START'
     assert loads(player2.recv(4096).decode()).get('command', None) == 'START'
 
-    t1 = Thread(target=run_game, args=(player1, 0), daemon=True)
+    t1 = Thread(target=run_game, args=(player1, 0))
     t1.start()
-    t2 = Thread(target=run_game, args=(player2, 1), daemon=True)
+    t2 = Thread(target=run_game, args=(player2, 1))
     t2.start()
 
     t1.join()
