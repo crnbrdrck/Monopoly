@@ -107,7 +107,7 @@ class Board:
             Card("You hit your head on a night out. You need 10 stiches. Pay hospital €100", False, "pay 100"),
             Card("Your son broke a window in school. Pay the school €150", False, "pay 150"),
             Card("You sold a 25 bag. Collect €25", False, "collect 25"),
-            Card("You horse came second. Collect €20 from the bookies", False, "collect 20"),
+            Card("Your horse came second. Collect €20 from the bookies", False, "collect 20"),
             Card("You visit your grandparents. Collect €100", False, "collect 100"),
             Card("Enda needs more funds for his event center. Pay €100", False, "pay 50"),
             Card("You won the 96FM CashCall. Collect €100.", False)
