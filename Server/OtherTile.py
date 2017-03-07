@@ -1,5 +1,5 @@
-class otherTile:
-    def __init__ (self, name):
+class OtherTile:
+    def __init__(self, name):
         self.__name = name 
 
     def getName(self):
