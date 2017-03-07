@@ -23,6 +23,7 @@ class Player:
         self.surface.blit(self.mytext,(650,(60+(self.num * 20))))
         self.injail = False
         self.properties = []
+        self.hasBail = False
 
         # Non pygame instance vars
         self.tile = 0
@@ -78,3 +79,15 @@ class Player:
 
     def getproperties(self):
         return self.properties
+
+    def removeplayer(self):
+        whiterect = pygame.Rect(self.coords[0], self.coords[1], 10, 10)
+        pygame.draw.rect(self.surface, (255, 255, 255), whiterect)
+        whiterect = pygame.Rect(650, (60 + (self.num * 20)), 120, 17)
+        pygame.draw.rect(self.surface, (255, 255, 255), whiterect)
+
+    def getBail(self):
+        self.hasBail = True
+
+    def useBail(self):
+        self.hasBail = False

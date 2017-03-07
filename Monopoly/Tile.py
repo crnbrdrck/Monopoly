@@ -9,7 +9,7 @@ class Tile:
         self.width = width
         self.height = height
         self.slots = [None] * 8
-        self.owner = "None"
+        self.owner = None
         if width >= height :
             for i in range(4):
                 self.slots[i] = (x +(i*(width/4)),y)

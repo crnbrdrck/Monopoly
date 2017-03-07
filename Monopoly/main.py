@@ -84,8 +84,9 @@ class Main():
             self.createplayer(playerid,players[playerid])
         self.playerid = localid
 
-    #def receiveroll(self,dice):
+    def receiveRoll(self,dice):
         #returns tuple containing the results of two dice rolls
+        return dice
 
     def setmoney(self,playernum,value):
         player = self.playerlist[playernum]
@@ -117,7 +118,7 @@ class Main():
         self.playerlist[playerid].addproperty(tile)
         self.board.gettile(tile).setowner(self.playerlist[playerid].getUsername())
 
-    def sold(self,playerid,tiles,owner = "None"):
+    def sold(self,playerid,tiles,owner = None):
         for tile in tiles:
             self.playerlist[playerid].removeproperty(tile)
             self.board.gettile(tile).setowner = owner
@@ -128,28 +129,43 @@ class Main():
     def jail(self,playerid):
         if self.playerlist[playerid].inJail():
             #say hes out of jail
+            self.chat.send_chat("Player %s has left jail" % (self.playerlist[playerid]))
             self.playerlist[playerid].free()
         else:
             self.playerlist[playerid].movetoJail()
             #say hes in jail
+            self.chat.send_chat("Player %s has been put to jail" % (self.playerlist[playerid]))
 
-    def pay(self,playerfrom,amount,playerto = "Bank"):
+    def pay(self,playerfrom,playerto,amount):
         pfrom = self.playerlist[playerfrom]
         current = pfrom.getmoney() - amount
         pfrom.setMoney(current)
-        if playerto != "Bank":
+        if playerto != None:
             pto = self.playerlist[playerto]
             current = pto.getmoney() + amount
             pto.setMoney(current)
 
-    #def receivecard(self,text,is_bail = False):
-        #self.chat.send_chat("You have received a card: " % (text))
-        #f is_bail:
-            #client recieves a out of jail free card
+    def receivecard(self,text,is_bail = False):
+        self.chat.send_chat("You have received a card: " % (text))
+        if is_bail:
+            self.playerlist[self.playerid].getBail()
+
+    def displaychat(self,playerid,text):
+        player = self.playerlist[playerid]
+        self.chat.send_chat("%s: %s" % (player.getUsername,text))
 
     def hasquit(self,playerid):
         player = self.playerlist[playerid]
         self.chat.send_chat("Player %s has quit" % (player.getUsername()))
+        #change display to remove player
+        player.removeplayer()
+
+    def gameover(self):
+        self.chat.send_chat("Game over!")
+        text = "Game over!"
+        font = pygame.font.SysFont("Calibri",90)
+        renderedtext = font.render(text,1,(0,0,0))
+        self.DISPLAYSURF.blit(renderedtext,(115,300))
 
     def displaytile(self,tile):
         whiterect = pygame.Rect(800, 450, 300, 80)
@@ -190,10 +206,10 @@ class Main():
                         print("End Turn")
                     elif self.showproperties.pressed(pygame.mouse.get_pos()):
                         #sample
-                        self.playerid = 0
-                        self.createplayer((0,0,0),0,"Mutombo")
-                        self.bought(0,27)
-                        self.bought(0,34)
+                        #self.playerid = 0
+                        #self.createplayer(0,"Mutombo")
+                        #self.bought(0,27)
+                        #self.bought(0,34)
                         player = self.playerlist[self.playerid]
                         self.chat.send_chat("You own these properties:")
                         for property in player.getproperties():
@@ -202,7 +218,6 @@ class Main():
                         if not self.started:
                             self.started = True
                             print("Start")
-                            self.startgame({0:"Juan",1:"elmer"},0)
                     for tile in self.board.gettiles():
                         if tile.pressed(pygame.mouse.get_pos()):
                             self.displaytile(tile)
