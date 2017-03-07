@@ -12,6 +12,5 @@ class Card:
     def isBail(self):
         return self.__is_bail
 
-    @property
-    def method(self, player, server):
-        self.__method(player, server)
+    def action(self, player, board):
+        self.__method(player, board)

@@ -19,11 +19,11 @@ class Board:
         self.__comm_chest = None
         self.curr_round = 0
         self.initialise_board()
-        self.initalise_cards()
+        self.initialise_cards()
 
     def initialise_board(self):
         self.__properties = [
-            OtherTile("Go"),                               # 00
+            OtherTile("GO"),                               # 00
             Prop("Cork City Gaol Heritage Centre", 60),    # 01
             OtherTile("Community Chest"),                  # 02
             Prop("Mizen Head", 60),                        # 03
@@ -68,52 +68,94 @@ class Board:
     def initialise_cards(self):
         # Chance cards
         chance = [
-            # TODO - Make lambdas
-            Card("Advance to Go. Collect €200", False, "goto 0"),
-            Card("Go to Fota Wildlife Park", False, "goto 24"),
-            Card("Go to Cork Racecourse Mallow", False, "goto 11"),
-            Card("Go to The Lifetime Lab", False, "goto 28"),
-            Card("Go to Kent Station", False, "goto 5"),
-            Card("The bank finally has your money. Collect €50", False, "pay from None amount 50"),
-            Card("Get out of jail free. This card may be kept until needed", True, "bail"),
-            Card("Go back 3 spaces", False, "goto -3"),
-            Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200",
-                 False, "to_jail"),
-            Card("Pay poor tax of €15", False, "pay to None amount 15"),
-            Card("Take a kayak. Go to the Port of Cork", False, "goto 35"),
-            Card("Kiss the Blarney Stone", False, "goto 39"),
-            Card("Repay everyone's water tax. Pay each player €50", False, "pay each 50"),
-            Card("You have won a GAA Lottery. Collect €100", False, "collect 100"),
-            Card("You were caught drinking in public. Pay €75", False, "pay 75"),
-            Card("You collect the dole. Collect €50", False, "collect 50"),
-            Card("Netflix subscription due. Pay €10", False, "pay 10"),
-            Card("Your free texts expired. Pay €20", False, "pay 20"),
+            Card("Advance to Go. Collect €200", False,
+                 lambda player, board: board.player_move(player, 40 - player.getPos())),
+            Card("Go to Fota Wildlife Park", False,
+                 lambda player, board: board.player_move(player, 64 - player.getPos())),
+            Card("Go to Cork Racecourse Mallow", False,
+                 lambda player, board: board.player_move(player, 51 - player.getPos())),
+            Card("Go to The Lifetime Lab", False,
+                 lambda player, board: board.player_move(player, 68 - player.getPos())),
+            Card("Go to Kent Station", False,
+                 lambda player, board: board.player_move(player, 45 - player.getPos())),
+            Card("The bank finally has your money. Collect €50", False,
+                 lambda player, board: (player.updateBank(50), board.server.send_pay(50, None, player))),
+            Card("Get out of jail free. This card may be kept until needed", True,
+                 lambda player, board: None),
+            Card("Go back 3 spaces", False,
+                 lambda player, board: board.player_move(player, -3)),
+            Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200", False,
+                 lambda player, board: board.send_to_jail(player)),
+            Card("Pay poor tax of €15", False,
+                 lambda player, board: (player.updateBank(-15), board.server.send_pay(15, player, None))),
+            Card("Take a kayak. Go to the Port of Cork", False,
+                 lambda player, board: board.player_move(player, 75 - player.getPos())),
+            Card("Kiss the Blarney Stone", False,
+                 lambda player, board: board.player_move(player, 79 - player.getPos())),
+            Card("Repay everyone's water tax. Pay each player €50", False,
+                 lambda player, board: [(player.updateBank(-50), other.updateBank(50),
+                                         board.server.send_pay(50, player, other))
+                                        for other in board.__players if other != player]
+                 ),
+            Card("You have won a GAA Lottery. Collect €100", False,
+                 lambda player, board: (player.updateBank(100), board.server.send_pay(100, None, player))),
+            Card("You were caught drinking in public. Pay €75", False,
+                 lambda player, board: (player.updateBank(-75), board.server.send_pay(75, player, None))),
+            Card("You collect the dole. Collect €50", False,
+                 lambda player, board: (player.updateBank(50), board.server.send_pay(50, None, player))),
+            Card("Netflix subscription due. Pay €10", False,
+                 lambda player, board: (player.updateBank(-10), board.server.send_pay(10, player, None))),
+            Card("Your free texts expired. Pay €20", False,
+                 lambda player, board: (player.updateBank(-20), board.server.send_pay(20, player, None))),
         ]
         shuffle(chance)
         self.__chance = deque(chance)
         community_chest = [
-            Card("Advance to Go. Collect €200", False, "goto 0"),
-            Card("Bank error in your favor", False, "collect 200"),
-            Card("Southdoc Fee. Pay €80", False, "pay 80"),
-            Card("Sold your iPhone 4 on DoneDeal. Collect €50", False, "collect 50"),
-            Card("You run an underground rave. Collect €50 from every player.", False, "goto 50 each"),
-            Card("Christmas Dole Bonus. Collect €100", False, "collect 100"),
-            Card("Get out of jail free. This card may be kept until needed", True, None),
-            Card("You got tax back boi. Collect €20", False, "collect 20"),
-            Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200",
-                 False, "to_jail"),
-            Card("It's your birthday, collect 10 from each player", False, "collect 10 each"),
-            Card("Life insurance matures. Collect €100", False, "collect 100"),
-            Card("You hit your head on a night out. You need 10 stiches. Pay hospital €100", False, "pay 100"),
-            Card("Your son broke a window in school. Pay the school €150", False, "pay 150"),
-            Card("You sold a 25 bag. Collect €25", False, "collect 25"),
-            Card("Your horse came second. Collect €20 from the bookies", False, "collect 20"),
-            Card("You visit your grandparents. Collect €100", False, "collect 100"),
-            Card("Enda needs more funds for his event center. Pay €100", False, "pay 50"),
-            Card("You won the 96FM CashCall. Collect €100.", False)
+            Card("Advance to Go. Collect €200", False,
+                 lambda player, board: board.player_move(player, 40 - player.getPos())),
+            Card("Bank error in your favor. Collect €200", False,
+                 lambda player, board: (player.updateBank(200), board.server.send_pay(200, player, None))),
+            Card("Southdoc Fee. Pay €80", False,
+                 lambda player, board: (player.updateBank(-80), board.server.send_pay(80, player, None))),
+            Card("Sold your iPhone 4 on DoneDeal. Collect €50", False,
+                 lambda player, board: (player.updateBank(50), board.server.send_pay(50, player, None))),
+            Card("You run an underground rave. Collect €50 from every player.", False,
+                 lambda player, board: [(player.updateBank(50), other.updateBank(-50),
+                                         board.server.send_pay(50, player, other))
+                                        for other in board.__players if other != player]
+                 ),
+            Card("Christmas Dole Bonus. Collect €100", False,
+                 lambda player, board: (player.updateBank(100), board.server.send_pay(100, None, player))),
+            Card("Get out of jail free. This card may be kept until needed", True,
+                 lambda player, board: None),
+            Card("You got tax back boi. Collect €20", False,
+                 lambda player, board: (player.updateBank(20), board.server.send_pay(20, None, player))),
+            Card("Go to Jail. Go directly to Jail. Do not pass Go. Do not collect €200", False,
+                 lambda player, board: board.send_to_jail(player)),
+            Card("It's your birthday, collect €10 from each player", False,
+                 lambda player, board: [(player.updateBank(10), other.updateBank(-10),
+                                         board.server.send_pay(10, other, player))
+                                        for other in board.__players if other != player]
+                 ),
+            Card("Life insurance matures. Collect €100", False,
+                 lambda player, board: (player.updateBank(100), board.server.send_pay(100, None, player))),
+            Card("You hit your head on a night out. You need 10 stitches. Pay hospital €100", False,
+                 lambda player, board: (player.updateBank(-100), board.server.send_pay(100, player, None))),
+            Card("You broke a window at the Science Ball. Pay the hotel €150", False,
+                 lambda player, board: (player.updateBank(-150), board.server.send_pay(150, player, None))),
+            Card("You sold a 25 bag. Collect €25", False,
+                 lambda player, board: (player.updateBank(25), board.server.send_pay(25, None, player))),
+            Card("You horse came second. Collect €20 from the bookies", False,
+                 lambda player, board: (player.updateBank(20), board.server.send_pay(20, None, player))),
+            Card("You visit your grandparents. Collect €100", False,
+                 lambda player, board: (player.updateBank(100), board.server.send_pay(100, None, player))),
+            Card("Enda needs more funds for his event center. Pay €100", False,
+                 lambda player, board: (player.updateBank(-100), board.server.send_pay(100, player, None))),
+            Card("You won the 96FM CashCall. Collect €100.", False,
+                 lambda player, board: (player.updateBank(100), board.server.send_pay(100, None, player)))
         ]
         shuffle(community_chest)
-        self.__comm_chest = community_chest
+        self.__comm_chest = deque(community_chest)
 
     def add_player(self, player):
         self.__players.append(player)
@@ -162,7 +204,7 @@ class Board:
         self.__current_doubles = 0
         if player.getBankBal() < 0:
             self.__players.remove(player)
-            self.server.send_event("Player %s is bankrupt and was removed from the game" % player.getUsername())
+            self.server.send_event("Player \"%s\" is bankrupt and was removed from the game" % player.getUsername())
             owns = [self.__properties.index(prop) for prop in player.getOwnedProperties()]
             self.server.send_sold(player, owns)
             for prop_id in owns:
@@ -170,7 +212,7 @@ class Board:
 
         if len(self.__players) == 1:
             winner = self.__players[0]
-            self.server.send_event("Player %s won the game with %i in their bank account, game over!" % (
+            self.server.send_event("Player \"%s\" won the game with %i in their bank account, game over!" % (
                 winner.getUsername(), winner.getBankBal()))
             self.server.end_game()
         self.__current_turn = (self.__current_turn + 1) % len(self.__players)
@@ -183,9 +225,9 @@ class Board:
             self.server.send_event("Round %i - %s" % (self.curr_round, str({p.getUsername(): p.getBankBal() for p in self.__players})))
         self.server.send_turn(self.__players[self.__current_turn])
 
-    def player_move(self, player, dice):
+    def player_move(self, player, dice_result):
         # Update player position
-        if player.movePosition(dice):
+        if player.movePosition(dice_result):
             # Player has passed go
             player.updateBank(200)
             self.server.send_pay(200, None, player)
@@ -200,19 +242,27 @@ class Board:
             self.send_to_jail(player)
 
         # Player landed on a chance / community chest
-        elif pos in [2, 7, 17, 22, 33, 36]:
-            if pos in [2, 17, 33]:
-                # TODO
-                pass
-            elif pos in [7, 22, 36]:
-                # TODO
-                pass
+        elif pos in [2, 17, 33]:
+            card = self.__comm_chest.popleft()
+            self.server.send_event("%s drew a Community Chest card: %s" % (player.getUsername(), card.getText()))
+            card.action(player, self)
+            self.__comm_chest.append(card)
+        elif pos in [7, 22, 36]:
+            card = self.__comm_chest.popleft()
+            self.server.send_event("%s drew a Chance card: %s" % (player.getUsername(), card.getText()))
+            card.action(player, self)
+            self.__comm_chest.append(card)
 
         # Player landed on tax
-        elif pos in [4, 38]:
+        elif pos == 4:
             player.updateBank(-200)
             self.server.send_pay(200, player, None)
             self.__freeParking += 200
+
+        elif pos == 38:
+            player.updateBank(-100)
+            self.server.send_pay(100, player, None)
+            self.__freeParking += 100
 
         # Player landed on free parking
         elif pos == 20:
