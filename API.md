@@ -18,10 +18,17 @@ Our API between server and client is based on a simple JSON structure
 *For port values used, see the [Server](Server "Server") documentation*
 
 ## Note: Success / Failure
-When a message below says **Returns: Success / Failure**, expect the following:
+When a message below says **Returns: Success / Failure**, expect the following JSON message
+```python
+{
+    "command": "COMMAND",
+    "values": {
+        "status": "1" for success else "0"
+    }
+}
+```
 
-- The string `'1'` in case of a success
-- The string `'0'` in case of a failure
+where COMMAND is replaced with the command that was sent initally
 
 ## Game Discovery Commands
 These commands are used by Clients to find and join open games
