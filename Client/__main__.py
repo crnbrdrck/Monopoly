@@ -52,15 +52,23 @@ parser.add_argument(
 
 # Set up a the Client Stuff
 args = parser.parse_args()
-print(args)
+gui = Main()
 if args.create:
-    # Create a game
-    pass
+    gui.create(args.host, args.name, args.password)
 elif args.join:
-    # Join a pre-existing game
-    pass
+    gui.join(args.host, args.name, args.password)
 elif args.poll:
-    # Poll the network for players
-    pass
+    print("Polling the network for games")
+    servers = gui.poll()
+    if not servers:
+        print("No Servers running")
+    else:
+        for server in servers:
+            print(server)
+    exit(0)
 else:
     print("You must specify to create, join or poll. Try the -h option")
+    exit(1)
+# Now run the game
+gui.init_display()
+gui.run()

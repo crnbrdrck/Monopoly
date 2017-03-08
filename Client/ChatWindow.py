@@ -22,8 +22,6 @@ class ChatWindow(Thread):
         self.log = None
         self.chat_var = None
 
-        self.start()
-
     def run(self):
         self.root = tk.Tk()
         self.root.protocol('WM_DELETE_WINDOW', lambda: 0)

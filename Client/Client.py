@@ -34,51 +34,32 @@ class Client:
             #str, str
             self.sock.connect((host, 44469))
             self._sendCommand("CREATE", game="Monopoly", username=username, password=password)
+            Thread(target=self._listen).start()
 
     def receive_create(self, status):
-            # 1 for SUCCESS, 0 for FAILURE
-            if status == '0':
-                # Invalid CREATE
-                self.sock.close()
-                self.sock = socket()
-            else:
-                self.inGame = True
-      
-
-    def poll(self):
-        if not self.inGame:
-            sock = socket(AF_INET, SOCK_DGRAM)
-            sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
-            timeouts = 3
-            sock.settimeout(2)
-            data = dumps({'command': 'POLL', 'values': {'game': 'Monopoly'}})
-            sock.sendto(data.encode(), ('255.255.255.255', 44470))
-            servers = {}
-            while timeouts > 0:
-                try:
-                    data, address = sock.recvfrom(1024)
-                    data = loads(data.decode())
-                    server_address = address[0]
-                    servers[server_address] = data['values']
-                except timeout:
-                    timeouts -= 1
-            return servers
-
+        # 1 for SUCCESS, 0 for FAILURE
+        if status == '0':
+            # Invalid CREATE
+            self.sock.close()
+            self.sock = socket()
+        else:
+            self.inGame = True
 
     def join(self, host, username, password=None):
         if not self.inGame:
             #str, str
             self.sock.connect((host, 44469))
             self._sendCommand("JOIN", game="Monopoly", username=username, password=password)
+            Thread(target=self._listen).start()
 
     def receive_join(self, status):
-            # 1 for SUCCESS, 0 for FAILURE
-            if status == '0':
-                # Invalid CREATE
-                self.sock.close()
-                self.sock = socket()
-            else:
-                self.inGame = True
+        # 1 for SUCCESS, 0 for FAILURE
+        if status == '0':
+            # Invalid CREATE
+            self.sock.close()
+            self.sock = socket()
+        else:
+            self.inGame = True
 
     def receive_start(self, values):
         if 'status' not in values:
@@ -152,8 +133,8 @@ class Client:
                                     ).start()
                                 except ValueError:
                                     print("Invalid JSON string received: " + message)
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
 
     def _handleMessage(self, payload):
         # Handle the data; parse command and call relevant function
@@ -199,3 +180,22 @@ class Client:
 
         except (ValueError, KeyError):
             print("Invalid game command received: " + payload)
+
+    @staticmethod
+    def poll():
+        sock = socket(AF_INET, SOCK_DGRAM)
+        sock.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+        timeouts = 3
+        sock.settimeout(2)
+        data = dumps({'command': 'POLL', 'values': {'game': 'Monopoly'}})
+        sock.sendto(data.encode(), ('255.255.255.255', 44470))
+        servers = {}
+        while timeouts > 0:
+            try:
+                data, address = sock.recvfrom(1024)
+                data = loads(data.decode())
+                server_address = address[0]
+                servers[server_address] = data['values']
+            except timeout:
+                timeouts -= 1
+        return servers

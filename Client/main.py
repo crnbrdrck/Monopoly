@@ -29,6 +29,12 @@ class Main:
         self.playerlist = {}
         self.client = Client(self)
         self.chat = ChatWindow(500, 720, self.client.chat)
+        self.can_roll = False
+        self.can_buy = False
+        self.current_doubles = 0
+
+    def init_display(self):
+        self.chat.start()
         pygame.init()
         self.DISPLAYSURF = pygame.display.set_mode((1060, 720))
         pygame.display.set_caption("Monopoly")
@@ -63,7 +69,13 @@ class Main:
 
     def receiveRoll(self, dice):
         # returns tuple containing the results of two dice rolls
-        return dice
+        if dice[0] != dice[1]:
+            self.can_roll = False
+        else:
+            self.current_doubles += 1
+
+        if self.current_doubles == 3:
+            self.can_roll = False
 
     def setmoney(self, playernum, value):
         player = self.playerlist[playernum]
@@ -86,11 +98,14 @@ class Main:
         self.DISPLAYSURF.blit(turntexrendered, (820, 15))
         if self.playerid == playerid:
             self.myturn = True
+            self.can_roll = True
+            self.current_doubles = 0
 
     def buying(self):
         # server asks player if it wants to buy
         msg = "Would you like to buy this property? Click BUY to buy or ROLL/END to continue"
         self.chat.receive_chat(msg)
+        self.can_buy = True
 
     # TODO - Handle doubles
 
@@ -173,17 +188,33 @@ class Main:
                     pygame.quit()
                     sys.exit(0)
                 elif event.type == MOUSEBUTTONDOWN:
-                    if self.buy.pressed(pygame.mouse.get_pos()):
-                        # Buy func goes here
-                        self.client.buy(True)
-                    elif self.sell.pressed(pygame.mouse.get_pos()):
-                        # Sell func goes here
-                        print("Not Implemented")
-                    elif self.roll.pressed(pygame.mouse.get_pos()):
-                        self.client.roll()
-                    elif self.endturn.pressed(pygame.mouse.get_pos()):
-                        self.client.endTurn()
-                    elif self.showproperties.pressed(pygame.mouse.get_pos()):
+                    if self.myturn:
+                        if self.buy.pressed(pygame.mouse.get_pos()):
+                            # Buy func goes here
+                            if self.can_buy:
+                                self.client.buy(True)
+                                self.can_buy = False
+                            else:
+                                self.chat.receive_chat("You cannot BUY anything right now")
+                        elif self.sell.pressed(pygame.mouse.get_pos()):
+                            # Sell func goes here
+                            print("Not Implemented")
+                        elif self.roll.pressed(pygame.mouse.get_pos()):
+                            if self.can_roll:
+                                self.can_buy = False
+                                self.client.roll()
+                            else:
+                                self.chat.receive_chat("You cannot roll anymore. Please END your turn")
+                        elif self.endturn.pressed(pygame.mouse.get_pos()):
+                            if self.can_roll:
+                                self.chat.receive_chat("You can still roll. Please ROLL")
+                            else:
+                                self.client.endTurn()
+                                self.can_buy = False
+                                self.myturn = False
+                    else:
+                        self.chat.receive_chat("It's not your turn!")
+                    if self.showproperties.pressed(pygame.mouse.get_pos()):
                         #sample
                         self.playerid = 0
                         self.createplayer(0,"Mutombo")
@@ -201,6 +232,15 @@ class Main:
                             self.displaytile(tile)
 
             pygame.display.update()
+
+    def create(self, host, username, password=None):
+        self.client.create(host, username, password)
+
+    def join(self, host, username, password=None):
+        self.client.join(host, username, password)
+
+    def poll(self):
+        return Client.poll()
 
 if __name__ == "__main__":
     main = Main()
