@@ -2,17 +2,19 @@ import pygame
 
 class Player:
     _COLOURS = [(255,0,0),(0,0,255),(0,255,0),(255,128,0),(255,0,255),(0,0,0),(255,255,0),(0,255,255)]
+    _NUM = 0
     '''
     surface = display surface
     colour = colour of player square
     num = player number
     board = board object
     '''
-    def __init__(self, surface, num, board, username):
+    def __init__(self, surface, board, username):
         self.tile = 0
         self.username = username
         self.money = 1500
-        self.num = num
+        self.num = Player._NUM
+        Player._NUM += 1
         self.board = board
         self.surface = surface
         self.colour = Player._COLOURS[self.num]

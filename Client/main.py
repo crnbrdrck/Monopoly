@@ -26,7 +26,7 @@ class Main:
         self.playerid = None
         self.started = False
         # Can change playerlist to a dictionary if needed
-        self.playerlist = []
+        self.playerlist = {}
         self.client = Client(self)
         self.chat = ChatWindow(500, 720, self.client.chat)
         pygame.init()
@@ -58,7 +58,7 @@ class Main:
     def startgame(self, players, local):
         self.started = True
         for playerid in players:
-            self.createplayer(playerid, players[playerid])
+            self.createplayer(int(playerid), players[playerid])
         self.playerid = local
 
     def receiveRoll(self, dice):
@@ -72,9 +72,9 @@ class Main:
     def receiveID(self, playerid):
         self.playerid = playerid
 
-    def createplayer(self,number,username):
-        player = Player(self.DISPLAYSURF, number, self.board, username)
-        self.playerlist.append(player)
+    def createplayer(self, id, username):
+        player = Player(self.DISPLAYSURF, self.board, username)
+        self.playerlist[id] = player
 
     def receiveturn(self,playerid):
         # receive turn from server
