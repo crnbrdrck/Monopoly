@@ -55,7 +55,7 @@ class ChatWindow(Thread):
 
         self.root.mainloop()
 
-    def add_to_log(self, msg, player=None):
+    def receive_chat(self, msg, player=None):
         # The default '>>' will precede server events
         if player is None:
             prefix = '>>'
