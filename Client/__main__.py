@@ -34,7 +34,7 @@ group.add_argument(
 parser.add_argument(
     '--host',
     help='Specify the host. Defaults to localhost',
-    default='',
+    default='127.0.0.1',
     action='store',
 )
 parser.add_argument(

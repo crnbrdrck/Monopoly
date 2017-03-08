@@ -88,7 +88,7 @@ class Main:
         player = Player(self.DISPLAYSURF, self.board, username)
         self.playerlist[id] = player
 
-    def receiveturn(self,playerid):
+    def receiveturn(self, playerid):
         # receive turn from server
         self.turn = playerid
         whiterect = pygame.Rect(820, 15, 200, 20)
@@ -201,7 +201,9 @@ class Main:
                             print("Not Implemented")
                         elif self.roll.pressed(pygame.mouse.get_pos()):
                             if self.can_roll:
-                                self.can_buy = False
+                                if self.can_buy:
+                                    self.client.buy(False)
+                                    self.can_buy = False
                                 self.client.roll()
                             else:
                                 self.chat.receive_chat("You cannot roll anymore. Please END your turn")
@@ -209,8 +211,10 @@ class Main:
                             if self.can_roll:
                                 self.chat.receive_chat("You can still roll. Please ROLL")
                             else:
+                                if self.can_buy:
+                                    self.client.buy(False)
+                                    self.can_buy = False
                                 self.client.endTurn()
-                                self.can_buy = False
                                 self.myturn = False
                     else:
                         self.chat.receive_chat("It's not your turn!")
