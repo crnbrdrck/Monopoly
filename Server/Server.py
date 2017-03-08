@@ -355,6 +355,9 @@ class Server:
                             for i, payload in enumerate(messages[1: -1], 1):
                                 messages[i] = '{' + payload + '}'
                             for message in messages:
+                                if self._closed:
+                                    # The server should stop
+                                    break
                                 try:
                                     message = loads(message)
                                     Thread(
