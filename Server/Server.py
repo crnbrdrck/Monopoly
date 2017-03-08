@@ -355,6 +355,9 @@ class Server:
                             for i, payload in enumerate(messages[1: -1], 1):
                                 messages[i] = '{' + payload + '}'
                             for message in messages:
+                                if self._closed:
+                                    # The server should stop
+                                    break
                                 try:
                                     message = loads(message)
                                     Thread(
@@ -472,6 +475,7 @@ class Server:
 
     def send_chat(self, player: Player or None, message: str) -> None:
         # Send a chat message from 'player'
+        player = player.getUsername() if player is not None else None
         msg = self._generate_message('CHAT', player=player, text=message)
         self._send_to_all(msg)
 
