@@ -98,6 +98,7 @@ class Main:
         self.DISPLAYSURF.blit(turntexrendered, (820, 15))
         if self.playerid == playerid:
             self.myturn = True
+            self.chat.receive_chat("It's your turn")
             self.can_roll = True
             self.current_doubles = 0
 
@@ -188,18 +189,21 @@ class Main:
                     pygame.quit()
                     sys.exit(0)
                 elif event.type == MOUSEBUTTONDOWN:
-                    if self.myturn:
-                        if self.buy.pressed(pygame.mouse.get_pos()):
-                            # Buy func goes here
+                    if self.buy.pressed(pygame.mouse.get_pos()):
+                        # Buy func goes here
+                        if self.myturn:
                             if self.can_buy:
                                 self.client.buy(True)
                                 self.can_buy = False
                             else:
                                 self.chat.receive_chat("You cannot BUY anything right now")
-                        elif self.sell.pressed(pygame.mouse.get_pos()):
-                            # Sell func goes here
-                            print("Not Implemented")
-                        elif self.roll.pressed(pygame.mouse.get_pos()):
+                        else:
+                            self.chat.receive_chat("It's not your turn!")
+                    elif self.sell.pressed(pygame.mouse.get_pos()):
+                        # Sell func goes here
+                        print("Not Implemented")
+                    elif self.roll.pressed(pygame.mouse.get_pos()):
+                        if self.myturn:
                             if self.can_roll:
                                 if self.can_buy:
                                     self.client.buy(False)
@@ -207,7 +211,10 @@ class Main:
                                 self.client.roll()
                             else:
                                 self.chat.receive_chat("You cannot roll anymore. Please END your turn")
-                        elif self.endturn.pressed(pygame.mouse.get_pos()):
+                        else:
+                            self.chat.receive_chat("It's not your turn!")
+                    elif self.endturn.pressed(pygame.mouse.get_pos()):
+                        if self.myturn:
                             if self.can_roll:
                                 self.chat.receive_chat("You can still roll. Please ROLL")
                             else:
@@ -216,18 +223,19 @@ class Main:
                                     self.can_buy = False
                                 self.client.endTurn()
                                 self.myturn = False
-                    else:
-                        self.chat.receive_chat("It's not your turn!")
+                        else:
+                            self.chat.receive_chat("It's not your turn!")
                     if self.showproperties.pressed(pygame.mouse.get_pos()):
                         #sample
-                        self.playerid = 0
-                        self.createplayer(0,"Mutombo")
-                        self.bought(0,27)
-                        self.bought(0,34)
-                        player = self.playerlist[self.playerid]
-                        self.chat.send_chat("You own these properties:")
-                        for property in player.getproperties():
-                            self.chat.send_chat("%s" % (self.gettile(property).toString()))
+                        # self.playerid = 0
+                        # self.createplayer(0,"Mutombo")
+                        # self.bought(0,27)
+                        # self.bought(0,34)
+                        # player = self.playerlist[self.playerid]
+                        # self.chat.receive_chat("You own these properties:")
+                        # for property in player.getproperties():
+                        #     self.chat.receive_chat("%s" % (self.gettile(property).toString()))
+                        pass
                     elif self.startbutton.pressed(pygame.mouse.get_pos()):
                         if not self.started:
                             self.client.start()
