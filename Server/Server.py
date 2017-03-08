@@ -154,7 +154,8 @@ class Server:
                         self._socket_owners[client_sock] = player
 
                         # Inform the client of success
-                        client_sock.sendall('1'.encode())
+                        msg = self._generate_message('CREATE', status='1')
+                        client_sock.sendall(msg.encode())
 
                         # Don't close client_sock since we'll be using it to communicate with the client
 
@@ -162,7 +163,8 @@ class Server:
                         self._created = True
                     except ValueError:
                         self._log('Invalid CREATE payload received: ' + message, stderr, 'WARN')
-                        client_sock.sendall('0'.encode())
+                        msg = self._generate_message('CREATE', status='0')
+                        client_sock.sendall(msg.encode())
                         client_sock.close()
 
             # Open the server
@@ -215,7 +217,8 @@ class Server:
 
             except ValueError:
                 self._log('Invalid POLL payload received: ' + data, stderr, 'WARN')
-                self._poll_sock.sendto('0'.encode(), addr)
+                msg = self._generate_message('POLL', status='0')
+                self._poll_sock.sendto(msg.encode(), addr)
             except OSError:
                 break
         return
@@ -261,11 +264,13 @@ class Server:
                     self._socket_owners[client_sock] = player
 
                     # Inform the client of success
-                    client_sock.sendall('1'.encode())
+                    msg = self._generate_message('JOIN', status='1')
+                    client_sock.sendall(msg.encode())
 
                 except ValueError:
                     self._log('Invalid JOIN payload received: ' + message, stderr, 'WARN')
-                    client_sock.sendall('0'.encode())
+                    msg = self._generate_message('CREATE', status='0')
+                    client_sock.sendall(msg.encode())
                     client_sock.close()
 
     def _start_listener(self) -> None:
@@ -307,10 +312,12 @@ class Server:
 
                 except ValueError:
                     self._log('Invalid START payload received: ' + message, stderr, 'WARN')
-                    conn.sendall('0'.encode())
+                    msg = self._generate_message('START', status='0')
+                    conn.sendall(msg.encode())
                 except AttributeError:
                     self._log('START Request was received without enough players', stderr, 'WARN')
-                    conn.sendall('0'.encode())
+                    msg = self._generate_message('START', status='0')
+                    conn.sendall(msg.encode())
 
         if not self._closed:
             self._log("Game starting")
