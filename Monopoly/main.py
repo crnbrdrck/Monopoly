@@ -96,8 +96,7 @@ class Main():
         self.playerid = playerid
 
     def createplayer(self,number,username):
-        colour = (random.randint(0,255),random.randint(0,255),random.randint(0,255))
-        player = Player.Player(self.DISPLAYSURF, colour, number, self.board, username)
+        player = Player.Player(self.DISPLAYSURF, number, self.board, username)
         self.playerlist.append(player)
 
     #def turn(self,playerid):
@@ -206,10 +205,10 @@ class Main():
                         print("End Turn")
                     elif self.showproperties.pressed(pygame.mouse.get_pos()):
                         #sample
-                        #self.playerid = 0
-                        #self.createplayer(0,"Mutombo")
-                        #self.bought(0,27)
-                        #self.bought(0,34)
+                        self.playerid = 0
+                        self.createplayer(0,"Mutombo")
+                        self.bought(0,27)
+                        self.bought(0,34)
                         player = self.playerlist[self.playerid]
                         self.chat.send_chat("You own these properties:")
                         for property in player.getproperties():
