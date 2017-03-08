@@ -472,6 +472,7 @@ class Server:
 
     def send_chat(self, player: Player or None, message: str) -> None:
         # Send a chat message from 'player'
+        player = player.getUsername() if player is not None else None
         msg = self._generate_message('CHAT', player=player, text=message)
         self._send_to_all(msg)
 
