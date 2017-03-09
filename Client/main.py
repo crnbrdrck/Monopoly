@@ -108,8 +108,6 @@ class Main:
         self.chat.receive_chat(msg)
         self.can_buy = True
 
-    # TODO - Handle doubles
-
     def bought(self, playerid, tile):
         self.playerlist[playerid].addproperty(tile)
         self.board.gettile(tile).setowner(self.playerlist[playerid].getUsername())
@@ -226,15 +224,10 @@ class Main:
                         else:
                             self.chat.receive_chat("It's not your turn!")
                     if self.showproperties.pressed(pygame.mouse.get_pos()):
-                        #sample
-                        # self.playerid = 0
-                        # self.createplayer(0,"Mutombo")
-                        # self.bought(0,27)
-                        # self.bought(0,34)
-                        # player = self.playerlist[self.playerid]
-                        # self.chat.receive_chat("You own these properties:")
-                        # for property in player.getproperties():
-                        #     self.chat.receive_chat("%s" % (self.gettile(property).toString()))
+                        player = self.playerlist[self.playerid]
+                        self.chat.receive_chat("You own these properties:")
+                        for property in player.getproperties():
+                            self.chat.receive_chat("%s" % (self.gettile(property).toString()))
                         pass
                     elif self.startbutton.pressed(pygame.mouse.get_pos()):
                         if not self.started:
