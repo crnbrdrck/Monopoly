@@ -1,63 +1,40 @@
 from sys import exit, stderr
-from argparse import ArgumentParser
+from tkinter import *
 try:
     from .main import Main
 except SystemError:
-    stderr.write("Monopoly.Client [ERROR]: Client must be run as a module. Check the README for instructions")
+    stderr.write("Monopoly.Client [ERROR]: Client must be run as a module. "
+                 "See https://crnbrdrck.github.io/Monopoly/ for instructions")
     exit(1)
 
 """
 Allows for running the code using python3 -m Client
 """
-
-parser = ArgumentParser(
-    prog="Monopoly.Client",
-    usage="python3 -m Client [-h] [-c|-j|--poll] [-h host] [-n username] [-p password]",
-    description="%(prog)s: Client of the Monopoly game written by Super Confused"
-)
-group = parser.add_mutually_exclusive_group()
-group.add_argument(
-    '-c', '--create',
-    help='Create a game',
-    action='store_true',
-)
-group.add_argument(
-    '-j', '--join',
-    help='Join a game',
-    action='store_true',
-)
-group.add_argument(
-    '--poll',
-    help='Poll the network for open games',
-    action='store_true'
-)
-parser.add_argument(
-    '--host',
-    help='Specify the host. Defaults to localhost',
-    default='127.0.0.1',
-    action='store',
-)
-parser.add_argument(
-    '-n', '--name',
-    help='Specify your username',
-    default='Guest',
-    action='store',
-)
-parser.add_argument(
-    '-p', '--password',
-    help='Specify the password',
-    default=None,
-    action='store',
-)
-
-# Set up a the Client Stuff
-args = parser.parse_args()
 gui = Main()
-if args.create:
-    gui.create(args.host, args.name, args.password)
-elif args.join:
-    gui.join(args.host, args.name, args.password)
-elif args.poll:
+window = Tk()
+window.title("Monopoly")
+host = StringVar()
+host.set("127.0.0.1")
+name = StringVar()
+name.set("Guest")
+password = StringVar()
+
+
+def create():
+    password_text = password.get()
+    password_text = password_text if password_text != '' else None
+    gui.create(host.get(), name.get(), password_text)
+    run()
+
+
+def join():
+    password_text = password.get()
+    password_text = password_text if password_text != '' else None
+    gui.join(host.get(), name.get(), password_text)
+    run()
+
+
+def poll():
     print("Polling the network for games")
     servers = gui.poll()
     if not servers:
@@ -66,9 +43,23 @@ elif args.poll:
         for server in servers:
             print(server)
     exit(0)
-else:
-    print("You must specify to create, join or poll. Try the -h option")
-    exit(1)
-# Now run the game
-gui.init_display()
-gui.run()
+
+
+def run():
+    # Now run the game
+    window.destroy()
+    gui.init_display()
+    gui.run()
+
+f = LabelFrame(window, text="Host IP")
+Entry(f, textvariable=host).pack(side=TOP, fill=BOTH, expand=1)
+f.pack(side=TOP, fill=BOTH, expand=1)
+f = LabelFrame(window, text="Username")
+Entry(f, textvariable=name).pack(side=TOP, fill=BOTH, expand=1)
+f.pack(side=TOP, fill=BOTH, expand=1)
+f = LabelFrame(window, text="Password")
+Entry(f, textvariable=password).pack(side=TOP, fill=BOTH, expand=1)
+f.pack(side=TOP, fill=BOTH, expand=1)
+Button(window, text="Create", command=create).pack(side=TOP, fill=BOTH, expand=1)
+Button(window, text="Join", command=join).pack(side=TOP, fill=BOTH, expand=1)
+window.mainloop()
