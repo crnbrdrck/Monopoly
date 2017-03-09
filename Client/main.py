@@ -93,7 +93,7 @@ class Main:
         self.turn = playerid
         whiterect = pygame.Rect(820, 15, 200, 20)
         pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
-        self.turntext = "Turn: Player " + str(playerid)
+        self.turntext = "Turn: " + self.playerlist[playerid].getUsername()
         turntexrendered = self.myfont.render(self.turntext, 1, (0, 0, 0))
         self.DISPLAYSURF.blit(turntexrendered, (820, 15))
         if self.playerid == playerid:

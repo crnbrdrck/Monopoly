@@ -54,11 +54,11 @@ class Player:
 
     def setMoney(self,value):
         self.money = value
-        self.text = "Player " + str(self.num) + " = $" + str(self.money)
-        self.mytext = self.myfont.render(self.text, 1, (0, 0, 0))
+        self.text = "" + str(self.username) + " = $" + str(self.money)
+        self.mytext = self.myfont.render(self.text, 1, self.colour)
         whiterect = pygame.Rect(650,(60+(self.num*20)),120,17)
         pygame.draw.rect(self.surface,(255,255,255),whiterect)
-        self.surface.blit(self.mytext, (650, (60 + (self.num * 20))))
+        self.surface.blit(self.mytext, (635, (60 + (self.num * 20))))
 
     def inJail(self):
         return self.injail
