@@ -40,4 +40,6 @@ class Tile:
         self.owner = owner
 
     def getowner(self):
-        return self.owner
+    	if self.owner == None:
+    		return "None"
+    	return self.owner
