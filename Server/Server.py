@@ -460,10 +460,11 @@ class Server:
         except ValueError:
             self._log('Tried to PAY from the bank to the bank', stderr, 'WARN')
 
-    def send_card(self, card: Card) -> None:
+    def send_card(self, player: Player, card: Card) -> None:
         # Constructs and sends a CARD message
         msg = self._generate_message('CARD', text=card.getText(), is_bail=card.isBail())
-        self._send_to_all(msg)
+        sock = self._player_sockets[player]
+        sock.sendall(msg.encode())
 
     def send_quit(self, player: Player) -> None:
         msg = self._generate_message('QUIT', player=player.getId())

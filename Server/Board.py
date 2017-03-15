@@ -17,7 +17,6 @@ class Board:
         self.__properties = []
         self.__chance = None
         self.__comm_chest = None
-        self.curr_round = 0
         self.initialise_board()
         self.initialise_cards()
 
@@ -219,10 +218,6 @@ class Board:
         self.begin_turn()
 
     def begin_turn(self):
-        if self.__current_turn == 0:
-            # TODO - Remove later
-            self.curr_round += 1
-            self.server.send_event("Round %i - %s" % (self.curr_round, str({p.getUsername(): p.getBankBal() for p in self.__players})))
         self.server.send_turn(self.__players[self.__current_turn])
 
     def player_move(self, player, dice_result):
