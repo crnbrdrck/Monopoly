@@ -97,7 +97,7 @@ def send_jailed(self, player: Player) -> None:
 def send_pay(self, amount: int, player_from: Player or None=None, player_to: Player or None=None) -> None:
     pass
 
-def send_card(self, card: Card) -> None:
+def send_card(self, player: Player, card: Card) -> None:
     pass
 
 def send_quit(self, player: Player) -> None:
