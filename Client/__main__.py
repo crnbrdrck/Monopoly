@@ -43,7 +43,6 @@ def main():
         else:
             for server in servers:
                 print(server)
-        exit(0)
 
 
     def run():
@@ -63,6 +62,7 @@ def main():
     f.pack(side=TOP, fill=BOTH, expand=1)
     Button(window, text="Create", command=create).pack(side=TOP, fill=BOTH, expand=1)
     Button(window, text="Join", command=join).pack(side=TOP, fill=BOTH, expand=1)
+    Button(window, text="Poll for Games", command=poll).pack(side=TOP, fill=BOTH, expand=1)
     window.mainloop()
 
 if __name__ == '__main__':
