@@ -93,7 +93,13 @@ class Main:
         self.turn = playerid
         whiterect = pygame.Rect(820, 15, 200, 20)
         pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
-        self.turntext = "Turn: " + self.playerlist[playerid].getUsername()
+        # Minor threading issues can occur here with START and the first TURN
+        while True:
+            try:
+                self.turntext = "Turn: " + self.playerlist[playerid].getUsername()
+                break
+            except KeyError:
+                continue
         turntexrendered = self.myfont.render(self.turntext, 1, (0, 0, 0))
         self.DISPLAYSURF.blit(turntexrendered, (820, 15))
         if self.playerid == playerid:
@@ -165,7 +171,7 @@ class Main:
         pygame.draw.rect(self.DISPLAYSURF, (255, 255, 255), whiterect)
         text1 = "Tile selected: "
         text2 = tile.toString()
-        text3 = "Owner: " + tile.getowner()
+        text3 = "Owner: " + str(tile.getowner())
         mytext1 = self.myfont.render(text1, 1, (0, 0, 0))
         mytext2 = self.myfont.render(text2,1,(0,0,0))
         mytext3 = self.myfont.render(text3,1,(0,0,0))

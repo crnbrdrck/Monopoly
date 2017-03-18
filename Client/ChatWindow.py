@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.scrolledtext as scrolledtext
-from threading import Thread
+from threading import Thread, Lock
 
 
 class ChatWindow(Thread):
@@ -21,6 +21,7 @@ class ChatWindow(Thread):
         self.root = None
         self.log = None
         self.chat_var = None
+        self.chat_lock = Lock()
 
     def run(self):
         self.root = tk.Tk()
@@ -59,9 +60,12 @@ class ChatWindow(Thread):
             prefix = '>>'
         else:
             prefix = '[%s]:' % player
+        self.chat_lock.acquire()
         self.log.config(state=tk.NORMAL)
         self.log.insert(tk.END, prefix + " " + msg + '\n')
+        self.log.see(tk.END)
         self.log.config(state=tk.DISABLED)
+        self.chat_lock.release()
 
     def chat(self, *args):
         """

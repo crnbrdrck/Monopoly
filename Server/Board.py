@@ -310,5 +310,6 @@ class Board:
         player.addOwnProp(prop)
         amount = prop.getPrice()
         self.server.send_pay(amount, player, None)
+        self.server.send_bought(player, pos)
         player.updateBank(amount * -1)
         self.server.send_event("%s bought %s for %i" % (player.getUsername(), prop.getName(), amount))
