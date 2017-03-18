@@ -179,7 +179,7 @@ class Client:
                 raise ValueError()
 
         except (ValueError, KeyError):
-            print("Invalid game command received: " + payload)
+            print("Invalid game command received: " + str(payload))
 
     @staticmethod
     def poll():
