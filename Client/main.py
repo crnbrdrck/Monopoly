@@ -137,13 +137,16 @@ class Main:
             # self.chat.send_chat("Player %s has been put to jail" % (self.playerlist[playerid]))
 
     def pay(self, playerfrom, playerto, amount):
-        pfrom = self.playerlist[playerfrom]
-        current = pfrom.getmoney() - amount
-        pfrom.setMoney(current)
-        if playerto is not None:
-            pto = self.playerlist[playerto]
-            current = pto.getmoney() + amount
-            pto.setMoney(current)
+        if playerfrom is not None:
+            # Decrease playerfrom's money
+            player = self.playerlist.get(playerfrom, None)
+            if player is not None:
+                player.setMoney(player.getmoney() - amount)
+        if playerto is None:
+            # Increase playerto's money
+            player = self.playerlist.get(playerto, None)
+            if player is not None:
+                player.setMoney(player.getmoney() + amount)
 
     def receivecard(self, text, is_bail=False):
         # self.chat.send_chat("You have received a card: " % text)
